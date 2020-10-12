@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EscPosDecode": {
+      "commandName": "Project",
+      "commandLineArgs": "acps.bin -o xacps.txt"
+    }
+  }
+}
