@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020 Kunio Fukuchi
+   Copyright (C) 2020-2022 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -32,9 +32,9 @@ namespace kunif.EscPosUtils
     public partial class EscPosTokenizer
     {
         /// <summary>
-        /// ESC/POS command type and related data length information structure
+        /// ESC/POS command type and related data length information class
         /// </summary>
-        private struct SeqInfo
+        private class SeqInfo
         {
             internal EscPosCmdType seqtype;
             internal long length;
@@ -43,277 +43,41 @@ namespace kunif.EscPosUtils
         /// <summary>
         /// single byte control code and command type enum table for printer
         /// </summary>
-        private static readonly Dictionary<byte, EscPosCmdType> s_Prt1ByteType = new Dictionary<byte, EscPosCmdType>()
+        private static readonly Dictionary<byte, EscPosCmdType> s_Prt1ByteType = new()
         {
-            { 0x09, EscPosCmdType.HorizontalTab                        },
-            { 0x0A, EscPosCmdType.PrintAndLineFeed                     },
+            { 0x09, EscPosCmdType.HorizontalTab },
+            { 0x0A, EscPosCmdType.PrintAndLineFeed },
             { 0x0C, EscPosCmdType.FormFeedPrintAndReturnToStandardMode },
-            { 0x0D, EscPosCmdType.PrintAndCarriageReturn               },
-            { 0x18, EscPosCmdType.Cancel                               }
+            { 0x0D, EscPosCmdType.PrintAndCarriageReturn },
+            { 0x18, EscPosCmdType.Cancel }
         };
 
         /// <summary>
         /// single byte control code and command type enum table for linedisplay(vacuum fluorescent display)
         /// </summary>
-        private static readonly Dictionary<byte, EscPosCmdType> s_Vfd1ByteType = new Dictionary<byte, EscPosCmdType>()
+        private static readonly Dictionary<byte, EscPosCmdType> s_Vfd1ByteType = new()
         {
-            { 0x08, EscPosCmdType.VfdMoveCursorLeft     },
-            { 0x09, EscPosCmdType.VfdMoveCursorRight    },
-            { 0x0A, EscPosCmdType.VfdMoveCursorDown     },
-            { 0x0B, EscPosCmdType.VfdHomePosition       },
-            { 0x0C, EscPosCmdType.VfdClearScreen        },
+            { 0x08, EscPosCmdType.VfdMoveCursorLeft },
+            { 0x09, EscPosCmdType.VfdMoveCursorRight },
+            { 0x0A, EscPosCmdType.VfdMoveCursorDown },
+            { 0x0B, EscPosCmdType.VfdHomePosition },
+            { 0x0C, EscPosCmdType.VfdClearScreen },
             { 0x0D, EscPosCmdType.VfdMoveCursorLeftMost },
-            { 0x18, EscPosCmdType.VfdClearCursorLine    }
+            { 0x18, EscPosCmdType.VfdClearCursorLine }
         };
-
-        //No.01:Japan
-        // A w12(0-12) x h24(3)
-        // B w10(0-10) x h24(3)
-        // C w 8(0- 8) x h16(2)
-
-        //No.02:TM-P60 with peeler
-        // A w12(0-12) x h24(3)
-        // B w10(0-10) x h24(3)
-        // C w 8(0- 8) x h16(2)
-        // spA w24(0-24) x h48(6) Not support User definded character
-
-        //No.03:
-        // A w12(0-12) x h24(3)
-        // B w10(0-10) x h24(3)
-        // C w 9(0- 9) x h17(3)
-
-        //No.04:Japan
-        // A w12(0-12) x h24(3)
-        // B w 8(0- 8) x h16(2)
-
-        //No.05:exclude Japan
-        // A w12(0-12) x h24(3)
-        // B w 9(0- 9) x h17(3)
-
-        //No.06:
-        // A w12(0-12) x h24(3)
-        // B w 9(0- 9) x h24(3)
-        // C w 9(0- 9) x h17(3)
-        // D w10(0-10) x h24(3)
-        // E w 8(0- 8) x h16(2)
-
-        //No.07:South Asia
-        // A w12(0-12) x h24(3)
-        // B w 9(0- 9) x h24(3)
-        // C w 9(0- 9) x h17(3)
-        // D w10(0-10) x h24(3)
-        // E w 8(0- 8) x h16(2)
-        // spA w12(0-12) x h24(3)
-        // spB w 9(0- 9) x h24(3)
-
-        //No.08:South Asia
-        // A w12(0-12) x h24(3)
-        // B w 9(0- 9) x h17(3)
-        // spA w12(0-12) x h24(3)
-        // spB w 9(0- 9) x h24(3)
-
-        //No.09:dot impact
-        // A w 9(0-12) x h 9(2)
-        // B w 7(0-10) x h 9(2)
-
-        internal struct SbcsFontSizeInfo
-        {
-            internal EscPosCmdType seqtype;
-            internal int width;
-            internal int height;
-            internal int xbytes;
-            internal int ybytes;
-        };
-
-        internal static readonly Dictionary<byte, SbcsFontSizeInfo> s_SbcsFontType01 = new Dictionary<byte, SbcsFontSizeInfo>()
-        {
-            {   0x00, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x30, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x01, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x31, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x02, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } },
-            {   0x32, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } }
-        };
-
-        internal static readonly Dictionary<byte, SbcsFontSizeInfo> s_SbcsFontType02 = new Dictionary<byte, SbcsFontSizeInfo>()
-        {
-            {   0x00, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x30, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x01, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x31, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x02, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } },
-            {   0x32, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } },
-            {   0x61, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 24, height = 48, xbytes = 24, ybytes = 6 } }
-        };
-
-        internal static readonly Dictionary<byte, SbcsFontSizeInfo> s_SbcsFontType03 = new Dictionary<byte, SbcsFontSizeInfo>()
-        {
-            {   0x00, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x30, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x01, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x31, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x02, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } },
-            {   0x32, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } }
-        };
-
-        internal static readonly Dictionary<byte, SbcsFontSizeInfo> s_SbcsFontType04 = new Dictionary<byte, SbcsFontSizeInfo>()
-        {
-            {   0x00, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x30, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x01, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } },
-            {   0x31, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } }
-        };
-
-        internal static readonly Dictionary<byte, SbcsFontSizeInfo> s_SbcsFontType05 = new Dictionary<byte, SbcsFontSizeInfo>()
-        {
-            {   0x00, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x30, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x01, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } },
-            {   0x31, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } }
-        };
-
-        internal static readonly Dictionary<byte, SbcsFontSizeInfo> s_SbcsFontType06 = new Dictionary<byte, SbcsFontSizeInfo>()
-        {
-            {   0x00, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x30, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x01, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0924, width =  9, height = 24, xbytes =  9, ybytes = 3 } },
-            {   0x31, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0924, width =  9, height = 24, xbytes =  9, ybytes = 3 } },
-            {   0x02, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } },
-            {   0x32, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } },
-            {   0x03, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x33, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x04, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } },
-            {   0x34, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } }
-        };
-
-        internal static readonly Dictionary<byte, SbcsFontSizeInfo> s_SbcsFontType07 = new Dictionary<byte, SbcsFontSizeInfo>()
-        {
-            {   0x00, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x30, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x01, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0924, width =  9, height = 24, xbytes =  9, ybytes = 3 } },
-            {   0x31, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0924, width =  9, height = 24, xbytes =  9, ybytes = 3 } },
-            {   0x02, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } },
-            {   0x32, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } },
-            {   0x03, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x33, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1024, width = 10, height = 24, xbytes = 10, ybytes = 3 } },
-            {   0x04, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } },
-            {   0x34, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0816, width =  8, height = 16, xbytes =  8, ybytes = 2 } },
-            {   0x61, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x62, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0924, width =  9, height = 24, xbytes =  9, ybytes = 3 } }
-        };
-
-        internal static readonly Dictionary<byte, SbcsFontSizeInfo> s_SbcsFontType08 = new Dictionary<byte, SbcsFontSizeInfo>()
-        {
-            {   0x00, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x30, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x01, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } },
-            {   0x31, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0917, width =  9, height = 17, xbytes =  9, ybytes = 3 } },
-            {   0x61, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters1224, width = 12, height = 24, xbytes = 12, ybytes = 3 } },
-            {   0x62, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0924, width =  9, height = 24, xbytes =  9, ybytes = 3 } }
-        };
-
-        internal static readonly Dictionary<byte, SbcsFontSizeInfo> s_SbcsFontType09 = new Dictionary<byte, SbcsFontSizeInfo>()
-        {
-            {   0x00, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0909, width =  9, height =  9, xbytes =  9, ybytes = 2 } },
-            {   0x30, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0909, width =  9, height =  9, xbytes =  9, ybytes = 2 } },
-            {   0x01, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0709, width =  7, height =  9, xbytes =  7, ybytes = 2 } },
-            {   0x31, new SbcsFontSizeInfo {seqtype = EscPosCmdType.EscDefineUserDefinedCharacters0709, width =  7, height =  9, xbytes =  7, ybytes = 2 } }
-        };
-
-        //No.01:Japan
-        // A 72 w24(24) x h24(3)
-        // B 60 w20(20) x h24(3)
-        // C 32 w16(16) x h16(2)
-
-        //No.02:Japan
-        // A 72 w24(24) x h24(3)
-        // B 60 w20(20) x h24(3)
-
-        //No.03:Japan,Korea
-        // A 72 w24(24) x h24(3)
-        // B 32 w16(16) x h16(2)
-
-        //No.04:China
-        // A 72 w24(24) x h24(3)
-
-        //No.05:dot impact
-        // A 32 w16(16) x h16(2)
-
-        internal struct KanjiFontSizeInfo
-        {
-            internal EscPosCmdType seqtype;
-            internal int width;
-            internal int height;
-            internal int xbytes;
-            internal int ybytes;
-        };
-
-        internal static readonly Dictionary<byte, KanjiFontSizeInfo> s_KanjiFontType01 = new Dictionary<byte, KanjiFontSizeInfo>()
-        {
-            {   0x00, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2424, width = 24, height = 24, xbytes = 24, ybytes = 3 } },
-            {   0x30, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2424, width = 24, height = 24, xbytes = 24, ybytes = 3 } },
-            {   0x01, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2024, width = 20, height = 24, xbytes = 20, ybytes = 3 } },
-            {   0x31, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2024, width = 20, height = 24, xbytes = 20, ybytes = 3 } },
-            {   0x02, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters1616, width = 16, height = 16, xbytes = 16, ybytes = 2 } },
-            {   0x32, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters1616, width = 16, height = 16, xbytes = 16, ybytes = 2 } }
-        };
-
-        internal static readonly Dictionary<byte, KanjiFontSizeInfo> s_KanjiFontType02 = new Dictionary<byte, KanjiFontSizeInfo>()
-        {
-            {   0x00, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2424, width = 24, height = 24, xbytes = 24, ybytes = 3 } },
-            {   0x30, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2424, width = 24, height = 24, xbytes = 24, ybytes = 3 } },
-            {   0x01, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2024, width = 20, height = 24, xbytes = 20, ybytes = 3 } },
-            {   0x31, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2024, width = 20, height = 24, xbytes = 20, ybytes = 3 } }
-        };
-
-        internal static readonly Dictionary<byte, KanjiFontSizeInfo> s_KanjiFontType03 = new Dictionary<byte, KanjiFontSizeInfo>()
-        {
-            {   0x00, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2424, width = 24, height = 24, xbytes = 24, ybytes = 3 } },
-            {   0x30, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2424, width = 24, height = 24, xbytes = 24, ybytes = 3 } },
-            {   0x01, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters1616, width = 16, height = 16, xbytes = 16, ybytes = 2 } },
-            {   0x31, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters1616, width = 16, height = 16, xbytes = 16, ybytes = 2 } }
-        };
-
-        internal static readonly Dictionary<byte, KanjiFontSizeInfo> s_KanjiFontType04 = new Dictionary<byte, KanjiFontSizeInfo>()
-        {
-            {   0x00, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2424, width = 24, height = 24, xbytes = 24, ybytes = 3 } },
-            {   0x30, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters2424, width = 24, height = 24, xbytes = 24, ybytes = 3 } }
-        };
-
-        internal static readonly Dictionary<byte, KanjiFontSizeInfo> s_KanjiFontType05 = new Dictionary<byte, KanjiFontSizeInfo>()
-        {
-            {   0x00, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters1616, width = 16, height = 16, xbytes = 16, ybytes = 2 } },
-            {   0x30, new KanjiFontSizeInfo {seqtype = EscPosCmdType.FsDefineUserDefinedKanjiCharacters1616, width = 16, height = 16, xbytes = 16, ybytes = 2 } }
-        };
-
-        //Vfd
-        // A w 9(0-12) x h 9(2)
-        // B w 7(0-10) x h 9(2)
-
-        internal struct VfdFontSizeInfo
-        {
-            internal EscPosCmdType seqtype;
-            internal int width;
-            internal int height;
-            internal int xbytes;
-            internal int ybytes;
-        };
-
-        internal static readonly VfdFontSizeInfo s_VfdFontType01 = new VfdFontSizeInfo { seqtype = EscPosCmdType.VfdEscDefineUserDefinedCharacters0816, width = 8, height = 16, xbytes = 8, ybytes = 2 };
-        internal static readonly VfdFontSizeInfo s_VfdFontType02 = new VfdFontSizeInfo { seqtype = EscPosCmdType.VfdEscDefineUserDefinedCharacters0507, width = 5, height =  7, xbytes = 5, ybytes = 1 };
 
         public const long EscPosPrinter = 1;
         public const long EscPosLineDisplay = 2;
 
-        private byte[] baData;
+        private byte[] baData = Array.Empty<byte>();
         private long dataLength;
         private long curIndex;
 
-        internal Dictionary<byte, SbcsFontSizeInfo> SbcsFontList;
-        internal Dictionary<byte, KanjiFontSizeInfo> KanjiFontList;
-        internal SbcsFontSizeInfo CurrentSbcsFontInfo;
-        internal KanjiFontSizeInfo CurrentKanjiFontInfo;
-        internal VfdFontSizeInfo CurrentVfdFontInfo;
+        internal Dictionary<byte, SbcsFontSizeInfo> SbcsFontList = new();
+        internal Dictionary<byte, KanjiFontSizeInfo> KanjiFontList = new();
+        internal SbcsFontSizeInfo CurrentSbcsFontInfo = new();
+        internal KanjiFontSizeInfo CurrentKanjiFontInfo = new();
+        internal VfdFontSizeInfo CurrentVfdFontInfo = new();
 
         private EscPosCmdType ctlType;
         private long blockLength;
@@ -336,7 +100,7 @@ namespace kunif.EscPosUtils
             {
                 throw new ArgumentNullException(nameof(data));
             }
-            List<EscPosCmd> result = new List<EscPosCmd> { };
+            List<EscPosCmd> result = new() { };
             long targetDevice = initialDevice;
             long prtHead = -1;
             long ctlHead = -1;
@@ -346,35 +110,35 @@ namespace kunif.EscPosUtils
 
             SbcsFontList = SbcsFontPattern switch
             {
-                1 => s_SbcsFontType01,
-                2 => s_SbcsFontType02,
-                3 => s_SbcsFontType03,
-                4 => s_SbcsFontType04,
-                5 => s_SbcsFontType05,
-                6 => s_SbcsFontType06,
-                7 => s_SbcsFontType07,
-                8 => s_SbcsFontType08,
-                9 => s_SbcsFontType09,
-                _ => s_SbcsFontType01,
+                1 => DeviceFontType.s_SbcsFontType01,
+                2 => DeviceFontType.s_SbcsFontType02,
+                3 => DeviceFontType.s_SbcsFontType03,
+                4 => DeviceFontType.s_SbcsFontType04,
+                5 => DeviceFontType.s_SbcsFontType05,
+                6 => DeviceFontType.s_SbcsFontType06,
+                7 => DeviceFontType.s_SbcsFontType07,
+                8 => DeviceFontType.s_SbcsFontType08,
+                9 => DeviceFontType.s_SbcsFontType09,
+                _ => DeviceFontType.s_SbcsFontType01,
             };
             CurrentSbcsFontInfo = SbcsFontList[0];
 
             KanjiFontList = KanjiFontPattern switch
             {
-                1 => s_KanjiFontType01,
-                2 => s_KanjiFontType02,
-                3 => s_KanjiFontType03,
-                4 => s_KanjiFontType04,
-                5 => s_KanjiFontType05,
-                _ => s_KanjiFontType01,
+                1 => DeviceFontType.s_KanjiFontType01,
+                2 => DeviceFontType.s_KanjiFontType02,
+                3 => DeviceFontType.s_KanjiFontType03,
+                4 => DeviceFontType.s_KanjiFontType04,
+                5 => DeviceFontType.s_KanjiFontType05,
+                _ => DeviceFontType.s_KanjiFontType01,
             };
             CurrentKanjiFontInfo = KanjiFontList[0];
 
             CurrentVfdFontInfo = LineDisplayFontPattern switch
             {
-                1 => s_VfdFontType01,
-                2 => s_VfdFontType02,
-                _ => s_VfdFontType01,
+                1 => DeviceFontType.s_VfdFontType01,
+                2 => DeviceFontType.s_VfdFontType02,
+                _ => DeviceFontType.s_VfdFontType01,
             };
 
             for (curIndex = 0; curIndex < dataLength; curIndex += blockLength)
@@ -635,7 +399,7 @@ namespace kunif.EscPosUtils
                 }
             }
             AddPrintablesAndControls(result, ref ctlHead, ref prtHead);
-            baData = null;
+            baData = Array.Empty<byte>();
             return result;
         }
 

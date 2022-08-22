@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020 Kunio Fukuchi
+   Copyright (C) 2020-2022 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -28,8 +28,6 @@ namespace kunif.EscPosUtils
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
-    using System.Drawing.Imaging;
 
     public static partial class EscPosDecoder
     {
@@ -159,7 +157,7 @@ namespace kunif.EscPosUtils
                 return "Odd length";
             }
             int count = (length / 2) - 1;
-            List<string> setting = new List<string>();
+            List<string> setting = new();
             for (int i = 0, currindex = 7; i < count; i++, currindex += 2)
             {
                 string currset = record.cmddata[currindex] switch
@@ -296,7 +294,7 @@ namespace kunif.EscPosUtils
             {
                 return "Length out of range";
             }
-            List<string> config = new List<string> { };
+            List<string> config = new() { };
             int count = length / 2;
             int cfgindex = index + 2;
             for (int i = 0; i < count; i++, cfgindex += 2)
@@ -626,7 +624,7 @@ namespace kunif.EscPosUtils
         {
             byte images = record.cmddata[index];
             string imagecount = images != 0 ? images.ToString("D", invariantculture) : "0=Unsupported";
-            List<System.Drawing.Bitmap> imagelist = new List<System.Drawing.Bitmap>();
+            List<System.Drawing.Bitmap> imagelist = new();
             int i = index + 1;
             for (int n = 0; n < images; n++)
             {

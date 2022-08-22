@@ -1,6 +1,6 @@
 /*
 
-   Copyright (C) 2020 Kunio Fukuchi
+   Copyright (C) 2020-2022 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -74,7 +74,7 @@ namespace kunif.EscPosUtils
                 return "Even length";
             }
             int count = (length - 1) / 2;
-            List<string> displays = new List<string>();
+            List<string> displays = new();
             for (int i = 0, currindex = 6; i < count; i++, currindex += 2)
             {
                 string enable = record.cmddata[currindex] switch
@@ -101,7 +101,7 @@ namespace kunif.EscPosUtils
                 return "Miss align length";
             }
             int count = (length - 1) / 9;
-            List<string> memorys = new List<string>();
+            List<string> memorys = new();
             for (int i = 0, currindex = 6; i < count; i++, currindex += 2)
             {
                 string msw = record.cmddata[currindex] switch

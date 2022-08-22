@@ -4,9 +4,9 @@ This is a utility for ESC/POS commands.
 
 Since it is under development, the API, functions, configuration, etc. may change significantly.
 
-Currently, it have the following three projects.
+Currently, it have the following four projects.
 
-- EscPosUtils: Library for Tokenize, Decode (and others) for ESC/POS commands
+- EscPosUtils: Library for Tokenize, Decode, Encode (and others) for ESC/POS commands
 
 - EscPosDecode: A command line tool that parses binary data files for ESC/POS commands.
 
@@ -16,15 +16,18 @@ Currently, it have the following three projects.
 
 To develop and execute this program you need:
 
-- Visual Studio 2019 or Visual Studio Community 2019  version 16.7.5
+- Visual Studio 2022 or Visual Studio Community 2022  version 17.3.1
+- .NET 6.0-Windows
 - .NET Standard 2.1
-- .NET Core 3.1
-- System.Drawing.Common 4.7.0
+- .NET Core App 3.1
+- KGySoft.Drawing.Common 6.3.2
+- System.Drawing.Common 6.0.0
 - System.Drawing.Primitives 4.3.0
-- Microsoft.NET.Test.sdk 16.7.1
-- MSTest.TestAdapter 2.1.2
-- MSTest.TestFramework 2.1.2
-- coverlet.collector 1.3.0
+- System.Text.Encoding.CodePages 6.0.0
+- Microsoft.NET.Test.sdk 17.3.0
+- MSTest.TestAdapter 2.2.10
+- MSTest.TestFramework 2.2.10
+- coverlet.collector 3.1.2
 
 
 ## EscPosUtils Features and API
@@ -33,11 +36,11 @@ namespase & using: kunif.EscPosUtils
 
 Enum: EscPosCmdType
 
-class: EscPosCmd, EscPosTokenizer, EscPosDecoder
+class: EscPosCmd, EscPosTokenizer, EscPosDecoder, EscPosEncoder
 
 EscPosCmdType: ESC/POS commands defined as Enums
 
-EscPosCmd: Class that holds the analysis result of ESC/POS command data
+EscPosCmd: Class that holds ESC/POS command data and analysis results
 - cmdtype: Enum value of ESC/POS command type
 - cmddata: Command byte array data
 - cmdlength: Command byte length
@@ -75,6 +78,8 @@ EscPosDecoder: A class that adds the details of the command isolated by EscPosTo
 - s_cp???? : Dictionary for conversion of printable/displayable data visualization process
 
 - GetEmbeddedESCtCodePage, PrtESCtCodePage, VfdESCtCodePage : Auxiliary methods and dictionaries for the above processing
+
+EscPosEncoder: A class that creates ESC/POS command data and holds it as a List of EscPosCmd.
 
 
 ## How to use EscPosDecode
@@ -177,7 +182,7 @@ The known issues are:
 - The Thai character conversion processing dictionary only created the framework and does not reflect the actual character code.
 - Some processing may be incorrect due to ambiguity, lack, mistakes, etc. in the specification information available on the Web.
 - API, functions, configuration, etc. are subject to change.
-- For example, the function to assemble ESC/POS commands and the simulation function of printers and linedisplay devices.
+- For example, the simulation function of printers and linedisplay devices.
 - Alternatively, existing functions may change the targets and parameters to be incorporated.
 
 

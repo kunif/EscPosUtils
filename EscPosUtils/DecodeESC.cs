@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020 Kunio Fukuchi
+   Copyright (C) 2020-2022 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -50,30 +50,37 @@ namespace kunif.EscPosUtils
         {
             return DecodeEscDefineUserDefinedCharacters(record, index, 12, 24);
         }
+
         internal static string DecodeEscDefineUserDefinedCharacters1024(EscPosCmd record, int index)
         {
             return DecodeEscDefineUserDefinedCharacters(record, index, 10, 24);
         }
+
         internal static string DecodeEscDefineUserDefinedCharacters0924(EscPosCmd record, int index)
         {
-            return DecodeEscDefineUserDefinedCharacters(record, index,  9, 24);
+            return DecodeEscDefineUserDefinedCharacters(record, index, 9, 24);
         }
+
         internal static string DecodeEscDefineUserDefinedCharacters0917(EscPosCmd record, int index)
         {
-            return DecodeEscDefineUserDefinedCharacters(record, index,  9, 17);
+            return DecodeEscDefineUserDefinedCharacters(record, index, 9, 17);
         }
+
         internal static string DecodeEscDefineUserDefinedCharacters0909(EscPosCmd record, int index)
         {
-            return DecodeEscDefineUserDefinedCharacters(record, index,  9,  9);
+            return DecodeEscDefineUserDefinedCharacters(record, index, 9, 9);
         }
+
         internal static string DecodeEscDefineUserDefinedCharacters0709(EscPosCmd record, int index)
         {
-            return DecodeEscDefineUserDefinedCharacters(record, index,  7,  9);
+            return DecodeEscDefineUserDefinedCharacters(record, index, 7, 9);
         }
+
         internal static string DecodeEscDefineUserDefinedCharacters0816(EscPosCmd record, int index)
         {
-            return DecodeEscDefineUserDefinedCharacters(record, index,  8, 16);
+            return DecodeEscDefineUserDefinedCharacters(record, index, 8, 16);
         }
+
         internal static string DecodeEscDefineUserDefinedCharacters(EscPosCmd record, int index, int maxwidth, int height)
         {
             byte ybytes = record.cmddata[index];
@@ -81,8 +88,8 @@ namespace kunif.EscPosUtils
             byte endcode = record.cmddata[index + 2];
             int count = startcode - endcode + 1;
             int i = index + 3;
-            List<string> chars = new List<string>();
-            List<System.Drawing.Bitmap> glyphs = new List<System.Drawing.Bitmap>();
+            List<string> chars = new();
+            List<System.Drawing.Bitmap> glyphs = new();
             for (int n = 0; n < count; n++)
             {
                 byte xbytes = record.cmddata[i];
@@ -93,7 +100,7 @@ namespace kunif.EscPosUtils
                 }
                 else
                 {
-                    System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(maxwidth, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    System.Drawing.Bitmap bitmap = new(maxwidth, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
                     ColorPalette palette = bitmap.Palette;
                     palette.Entries[0] = Color.White;
                     palette.Entries[1] = Color.Black;
@@ -264,7 +271,7 @@ namespace kunif.EscPosUtils
             };
             int width = BitConverter.ToUInt16(record.cmddata, index + 1);
             string widthstr = width.ToString("D", invariantculture);
-            if ((height > 0) && ((width > 0)&&(width <= 0x960)))
+            if ((height > 0) && ((width > 0) && (width <= 0x960)))
             {
                 record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 3), "1");
             }
@@ -563,57 +570,57 @@ namespace kunif.EscPosUtils
             };
         }
 
-        public static readonly Dictionary<byte, int> PrtESCtCodePage = new Dictionary<byte, int>()
+        public static readonly Dictionary<byte, int> PrtESCtCodePage = new()
         {
-            { 0,    437 },  // PC437: USA, Standard Europe
-            { 1,    932 },  // PC932: Katakana
-            { 2,    850 },  // PC850: Multilingual
-            { 3,    860 },  // PC860: Portuguese
-            { 4,    863 },  // PC863: Canadian-French
-            { 5,    865 },  // PC865: Nordic
-            { 6,      6 },  // Page 6: Hiragana Not suitable code page but alternative definition
-            { 7,      7 },  // Page 7:One-pass printing Kanji characters
-            { 8,      8 },  // Page 8:One-pass printing Kanji characters
-            { 11,    11 },  // PC851: Greek
-            { 12,    12 },  // PC853: Turkish
-            { 13,   857 },  // PC857: Turkish
-            { 14,   737 },  // PC737: Greek
+            { 0, 437 },  // PC437: USA, Standard Europe
+            { 1, 932 },  // PC932: Katakana
+            { 2, 850 },  // PC850: Multilingual
+            { 3, 860 },  // PC860: Portuguese
+            { 4, 863 },  // PC863: Canadian-French
+            { 5, 865 },  // PC865: Nordic
+            { 6, 6 },  // Page 6: Hiragana Not suitable code page but alternative definition
+            { 7, 7 },  // Page 7:One-pass printing Kanji characters
+            { 8, 8 },  // Page 8:One-pass printing Kanji characters
+            { 11, 11 },  // PC851: Greek
+            { 12, 12 },  // PC853: Turkish
+            { 13, 857 },  // PC857: Turkish
+            { 14, 737 },  // PC737: Greek
             { 15, 28597 },  // ISO8859-7: Greek
-            { 16,  1252 },  // WPC1252
-            { 17,   866 },  // PC866: Cyrillic #2
-            { 18,   852 },  // PC852: Latin 2
-            { 19,   858 },  // PC858: Euro
-            { 20,    20 },  // Page 20 Thai Character Code 42 Not suitable code page but alternative definition
-            { 21,    21 },  // Page 21 Thai Character Code 11 Not suitable code page but alternative definition
-            { 22,    22 },  // Page 22 Thai Character Code 13 Not suitable code page but alternative definition
-            { 23,    23 },  // Page 23 Thai Character Code 14 Not suitable code page but alternative definition
-            { 24,    24 },  // Page 24 Thai Character Code 16 Not suitable code page but alternative definition
-            { 25,    25 },  // Page 25 Thai Character Code 17 Not suitable code page but alternative definition
-            { 26,    26 },  // Page 26 Thai Character Code 18 Not suitable code page but alternative definition
-            { 30,    30 },  // Page 30 TCVN-3: Vietnamese Not suitable code page but alternative definition
-            { 31,    31 },  // Page 31 TCVN-3: Vietnamese Not suitable code page but alternative definition
-            { 32,   720 },  // PC720: Arabic
-            { 33,   775 },  // WPC775: Baltic Rim
-            { 34,   855 },  // PC855: Cyrillic
-            { 35,   861 },  // PC861: Icelandic
-            { 36,   862 },  // PC862: Hebrew
-            { 37,   864 },  // PC864: Arabic
-            { 38,   869 },  // PC869: Greek
+            { 16, 1252 },  // WPC1252
+            { 17, 866 },  // PC866: Cyrillic #2
+            { 18, 852 },  // PC852: Latin 2
+            { 19, 858 },  // PC858: Euro
+            { 20, 20 },  // Page 20 Thai Character Code 42 Not suitable code page but alternative definition
+            { 21, 21 },  // Page 21 Thai Character Code 11 Not suitable code page but alternative definition
+            { 22, 22 },  // Page 22 Thai Character Code 13 Not suitable code page but alternative definition
+            { 23, 23 },  // Page 23 Thai Character Code 14 Not suitable code page but alternative definition
+            { 24, 24 },  // Page 24 Thai Character Code 16 Not suitable code page but alternative definition
+            { 25, 25 },  // Page 25 Thai Character Code 17 Not suitable code page but alternative definition
+            { 26, 26 },  // Page 26 Thai Character Code 18 Not suitable code page but alternative definition
+            { 30, 30 },  // Page 30 TCVN-3: Vietnamese Not suitable code page but alternative definition
+            { 31, 31 },  // Page 31 TCVN-3: Vietnamese Not suitable code page but alternative definition
+            { 32, 720 },  // PC720: Arabic
+            { 33, 775 },  // WPC775: Baltic Rim
+            { 34, 855 },  // PC855: Cyrillic
+            { 35, 861 },  // PC861: Icelandic
+            { 36, 862 },  // PC862: Hebrew
+            { 37, 864 },  // PC864: Arabic
+            { 38, 869 },  // PC869: Greek
             { 39, 28592 },  // ISO8859-2: Latin 2
             { 40, 28605 },  // ISO8859-15: Latin 9
-            { 41,    41 },  // PC1098: Farsi
-            { 42,    42 },  // PC1118: Lithuanian
-            { 43,    43 },  // PC1119: Lithuanian
-            { 44,    44 },  // PC1125: Ukrainian
-            { 45,  1250 },  // WPC1250: Latin 2
-            { 46,  1251 },  // WPC1251: Cyrillic
-            { 47,  1253 },  // WPC1253: Greek
-            { 48,  1254 },  // WPC1254: Turkish
-            { 49,  1255 },  // WPC1255: Hebrew
-            { 50,  1256 },  // WPC1256: Arabic
-            { 51,  1257 },  // WPC1257: Baltic Rim
-            { 52,  1258 },  // WPC1258: Vietnamese
-            { 53,    53 },  // KZ-1048: Kazakhstan Not suitable code page but alternative definition
+            { 41, 41 },  // PC1098: Farsi
+            { 42, 42 },  // PC1118: Lithuanian
+            { 43, 43 },  // PC1119: Lithuanian
+            { 44, 44 },  // PC1125: Ukrainian
+            { 45, 1250 },  // WPC1250: Latin 2
+            { 46, 1251 },  // WPC1251: Cyrillic
+            { 47, 1253 },  // WPC1253: Greek
+            { 48, 1254 },  // WPC1254: Turkish
+            { 49, 1255 },  // WPC1255: Hebrew
+            { 50, 1256 },  // WPC1256: Arabic
+            { 51, 1257 },  // WPC1257: Baltic Rim
+            { 52, 1258 },  // WPC1258: Vietnamese
+            { 53, 53 },  // KZ-1048: Kazakhstan Not suitable code page but alternative definition
             { 66, 57002 },  // Devanagari
             { 67, 57003 },  // Bengali
             { 68, 57004 },  // Tamil
@@ -625,8 +632,8 @@ namespace kunif.EscPosUtils
             { 74, 57010 },  // Gujarati
             { 75, 57011 },  // Punjabi
             { 82, 57002 },  // Marathi Not suitable code page but alternative definition
-            { 254,  254 },  // Page254
-            { 255,  255 }   // Page255
+            { 254, 254 },  // Page254
+            { 255, 255 }   // Page255
         };
 
         //  ESC t   1B 74 00-08/0B-1A/1E-35/42-4B/52/FE/FF
@@ -718,6 +725,7 @@ namespace kunif.EscPosUtils
         {
             return DecodeEscDefineUserDefinedCharacters(record, index, 8, 16);
         }
+
         internal static string DecodeVfdEscDefineUserDefinedCharacters0507(EscPosCmd record, int index)
         {
             return DecodeEscDefineUserDefinedCharacters(record, index, 5, 7);
@@ -812,49 +820,49 @@ namespace kunif.EscPosUtils
             return $"Window number:{winno}, Action:{mode}, Left:{left}, Top:{top}, Right:{right}, Bottom:{bottom}";
         }
 
-        public static readonly Dictionary<byte, int> VfdESCtCodePage = new Dictionary<byte, int>()
+        public static readonly Dictionary<byte, int> VfdESCtCodePage = new()
         {
-            { 0,    437 },  // PC437: USA, Standard Europe
-            { 1,    932 },  // PC932: Katakana
-            { 2,    850 },  // PC850: Multilingual
-            { 3,    860 },  // PC860: Portuguese
-            { 4,    863 },  // PC863: Canadian-French
-            { 5,    865 },  // PC865: Nordic
-            { 11,    11 },  // PC851: Greek
-            { 12,    12 },  // PC853: Turkish
-            { 13,   857 },  // PC857: Turkish
-            { 14,   737 },  // PC737: Greek
+            { 0, 437 },  // PC437: USA, Standard Europe
+            { 1, 932 },  // PC932: Katakana
+            { 2, 850 },  // PC850: Multilingual
+            { 3, 860 },  // PC860: Portuguese
+            { 4, 863 },  // PC863: Canadian-French
+            { 5, 865 },  // PC865: Nordic
+            { 11, 11 },  // PC851: Greek
+            { 12, 12 },  // PC853: Turkish
+            { 13, 857 },  // PC857: Turkish
+            { 14, 737 },  // PC737: Greek
             { 15, 28597 },  // ISO8859-7: Greek
-            { 16,  1252 },  // WPC1252
-            { 17,   866 },  // PC866: Cyrillic #2
-            { 18,   852 },  // PC852: Latin 2
-            { 19,   858 },  // PC858: Euro
-            { 30,    30 },  // Page 30 TCVN-3: Vietnamese Not suitable code page but alternative definition
-            { 31,    31 },  // Page 31 TCVN-3: Vietnamese Not suitable code page but alternative definition
-            { 32,   720 },  // PC720: Arabic
-            { 33,   775 },  // WPC775: Baltic Rim
-            { 34,   855 },  // PC855: Cyrillic
-            { 35,   861 },  // PC861: Icelandic
-            { 36,   862 },  // PC862: Hebrew
-            { 37,   864 },  // PC864: Arabic
-            { 38,   869 },  // PC869: Greek
+            { 16, 1252 },  // WPC1252
+            { 17, 866 },  // PC866: Cyrillic #2
+            { 18, 852 },  // PC852: Latin 2
+            { 19, 858 },  // PC858: Euro
+            { 30, 30 },  // Page 30 TCVN-3: Vietnamese Not suitable code page but alternative definition
+            { 31, 31 },  // Page 31 TCVN-3: Vietnamese Not suitable code page but alternative definition
+            { 32, 720 },  // PC720: Arabic
+            { 33, 775 },  // WPC775: Baltic Rim
+            { 34, 855 },  // PC855: Cyrillic
+            { 35, 861 },  // PC861: Icelandic
+            { 36, 862 },  // PC862: Hebrew
+            { 37, 864 },  // PC864: Arabic
+            { 38, 869 },  // PC869: Greek
             { 39, 28592 },  // ISO8859-2: Latin 2
             { 40, 28605 },  // ISO8859-15: Latin 9
-            { 41,    41 },  // PC1098: Farsi
-            { 42,    42 },  // PC1118: Lithuanian
-            { 43,    43 },  // PC1119: Lithuanian
-            { 44,    44 },  // PC1125: Ukrainian
-            { 45,  1250 },  // WPC1250: Latin 2
-            { 46,  1251 },  // WPC1251: Cyrillic
-            { 47,  1253 },  // WPC1253: Greek
-            { 48,  1254 },  // WPC1254: Turkish
-            { 49,  1255 },  // WPC1255: Hebrew
-            { 50,  1256 },  // WPC1256: Arabic
-            { 51,  1257 },  // WPC1257: Baltic Rim
-            { 52,  1258 },  // WPC1258: Vietnamese
-            { 53,    53 },  // KZ-1048: Kazakhstan Not suitable code page but alternative definition
-            { 254,  254 },  // Page254
-            { 255,  255 }   // Page255
+            { 41, 41 },  // PC1098: Farsi
+            { 42, 42 },  // PC1118: Lithuanian
+            { 43, 43 },  // PC1119: Lithuanian
+            { 44, 44 },  // PC1125: Ukrainian
+            { 45, 1250 },  // WPC1250: Latin 2
+            { 46, 1251 },  // WPC1251: Cyrillic
+            { 47, 1253 },  // WPC1253: Greek
+            { 48, 1254 },  // WPC1254: Turkish
+            { 49, 1255 },  // WPC1255: Hebrew
+            { 50, 1256 },  // WPC1256: Arabic
+            { 51, 1257 },  // WPC1257: Baltic Rim
+            { 52, 1258 },  // WPC1258: Vietnamese
+            { 53, 53 },  // KZ-1048: Kazakhstan Not suitable code page but alternative definition
+            { 254, 254 },  // Page254
+            { 255, 255 }   // Page255
         };
 
         //  ESC t   1B 74 00-13/1E-35/FE/FF

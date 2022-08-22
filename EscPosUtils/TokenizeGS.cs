@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020 Kunio Fukuchi
+   Copyright (C) 2020-2022 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -37,187 +37,186 @@ namespace kunif.EscPosUtils
         /// <summary>
         /// GS(0x1D) XX started fixed size printer command type and related length information
         /// </summary>
-        private static readonly Dictionary<byte, SeqInfo> s_PrtGSType = new Dictionary<byte, SeqInfo>()
+        private static readonly Dictionary<byte, SeqInfo> s_PrtGSType = new()
         {
-            { 0x21, new SeqInfo { seqtype = EscPosCmdType.GsSelectCharacterSize,                  length = 3 } },
+            { 0x21, new SeqInfo { seqtype = EscPosCmdType.GsSelectCharacterSize, length = 3 } },
             { 0x24, new SeqInfo { seqtype = EscPosCmdType.GsSetAbsoluteVerticalPrintPositionInPageMode, length = 4 } },
-            { 0x26, new SeqInfo { seqtype = EscPosCmdType.GsSetAbsoluteVerticalPrintPosition,     length = 4 } },
-            { 0x2F, new SeqInfo { seqtype = EscPosCmdType.GsObsoletePrintDownloadedBitimage,      length = 3 } },
-            { 0x3A, new SeqInfo { seqtype = EscPosCmdType.GsStartEndMacroDefinition,              length = 2 } },
-            { 0x42, new SeqInfo { seqtype = EscPosCmdType.GsTurnWhiteBlackReversePrintMode,       length = 3 } },
-            { 0x45, new SeqInfo { seqtype = EscPosCmdType.GsObsoleteSelectHeadControlMethod,      length = 3 } },
-            { 0x48, new SeqInfo { seqtype = EscPosCmdType.GsSelectPrintPositionHRICharacters,     length = 3 } },
-            { 0x49, new SeqInfo { seqtype = EscPosCmdType.GsTransmitPrinterID,                    length = 3 } },
-            { 0x4C, new SeqInfo { seqtype = EscPosCmdType.GsSetLeftMargin,                        length = 4 } },
-            { 0x50, new SeqInfo { seqtype = EscPosCmdType.GsSetHorizontalVerticalMotionUnits,     length = 4 } },
+            { 0x2F, new SeqInfo { seqtype = EscPosCmdType.GsObsoletePrintDownloadedBitimage, length = 3 } },
+            { 0x3A, new SeqInfo { seqtype = EscPosCmdType.GsStartEndMacroDefinition, length = 2 } },
+            { 0x42, new SeqInfo { seqtype = EscPosCmdType.GsTurnWhiteBlackReversePrintMode, length = 3 } },
+            { 0x45, new SeqInfo { seqtype = EscPosCmdType.GsObsoleteSelectHeadControlMethod, length = 3 } },
+            { 0x48, new SeqInfo { seqtype = EscPosCmdType.GsSelectPrintPositionHRICharacters, length = 3 } },
+            { 0x49, new SeqInfo { seqtype = EscPosCmdType.GsTransmitPrinterID, length = 3 } },
+            { 0x4C, new SeqInfo { seqtype = EscPosCmdType.GsSetLeftMargin, length = 4 } },
+            { 0x50, new SeqInfo { seqtype = EscPosCmdType.GsSetHorizontalVerticalMotionUnits, length = 4 } },
             { 0x54, new SeqInfo { seqtype = EscPosCmdType.GsSetPrintPositionBeginningOfPrintLine, length = 3 } },
-            { 0x57, new SeqInfo { seqtype = EscPosCmdType.GsSetPrintAreaWidth,                    length = 4 } },
-            { 0x5C, new SeqInfo { seqtype = EscPosCmdType.GsSetRelativeVerticalPrintPosition,     length = 4 } },
-            { 0x5E, new SeqInfo { seqtype = EscPosCmdType.GsExecuteMacro,                         length = 5 } },
-            { 0x61, new SeqInfo { seqtype = EscPosCmdType.GsEnableDisableAutomaticStatusBack,     length = 3 } },
-            { 0x62, new SeqInfo { seqtype = EscPosCmdType.GsTurnSmoothingMode,                    length = 3 } },
-            { 0x63, new SeqInfo { seqtype = EscPosCmdType.GsObsoletePrintCounter,                 length = 2 } },
-            { 0x66, new SeqInfo { seqtype = EscPosCmdType.GsSelectFontHRICharacters,              length = 3 } },
-            { 0x68, new SeqInfo { seqtype = EscPosCmdType.GsSetBarcodeHight,                      length = 3 } },
-            { 0x6A, new SeqInfo { seqtype = EscPosCmdType.GsEnableDisableAutomaticStatusBackInk,  length = 3 } },
-            { 0x72, new SeqInfo { seqtype = EscPosCmdType.GsTransmitStatus,                       length = 3 } },
-            { 0x77, new SeqInfo { seqtype = EscPosCmdType.GsSetBarcodeWidth,                      length = 3 } },
-            { 0x7A, new SeqInfo { seqtype = EscPosCmdType.GsSetOnlineRecoveryWaitTime,            length = 5 } }
+            { 0x57, new SeqInfo { seqtype = EscPosCmdType.GsSetPrintAreaWidth, length = 4 } },
+            { 0x5C, new SeqInfo { seqtype = EscPosCmdType.GsSetRelativeVerticalPrintPosition, length = 4 } },
+            { 0x5E, new SeqInfo { seqtype = EscPosCmdType.GsExecuteMacro, length = 5 } },
+            { 0x61, new SeqInfo { seqtype = EscPosCmdType.GsEnableDisableAutomaticStatusBack, length = 3 } },
+            { 0x62, new SeqInfo { seqtype = EscPosCmdType.GsTurnSmoothingMode, length = 3 } },
+            { 0x63, new SeqInfo { seqtype = EscPosCmdType.GsObsoletePrintCounter, length = 2 } },
+            { 0x66, new SeqInfo { seqtype = EscPosCmdType.GsSelectFontHRICharacters, length = 3 } },
+            { 0x68, new SeqInfo { seqtype = EscPosCmdType.GsSetBarcodeHight, length = 3 } },
+            { 0x6A, new SeqInfo { seqtype = EscPosCmdType.GsEnableDisableAutomaticStatusBackInk, length = 3 } },
+            { 0x72, new SeqInfo { seqtype = EscPosCmdType.GsTransmitStatus, length = 3 } },
+            { 0x77, new SeqInfo { seqtype = EscPosCmdType.GsSetBarcodeWidth, length = 3 } },
+            { 0x7A, new SeqInfo { seqtype = EscPosCmdType.GsSetOnlineRecoveryWaitTime, length = 5 } }
         };
 
         /// <summary>
         /// GS(0x1D) ( C pL pH XX started printer command type information
         /// </summary>
-        private static readonly Dictionary<byte, EscPosCmdType> s_PrtGSCType = new Dictionary<byte, EscPosCmdType>()
+        private static readonly Dictionary<byte, EscPosCmdType> s_PrtGSCType = new()
         {
-            { 0x00, EscPosCmdType.GsDeleteSpecifiedRecord                          },
-            { 0x01, EscPosCmdType.GsStoreDataSpecifiedRecord                       },
-            { 0x02, EscPosCmdType.GsTransmitDataSpecifiedRecord                    },
-            { 0x03, EscPosCmdType.GsTransmitCapacityNVUserMemory                   },
-            { 0x04, EscPosCmdType.GsTransmitRemainingCapacityNVUserMemory          },
-            { 0x05, EscPosCmdType.GsTransmitKeycodeList                            },
-            { 0x06, EscPosCmdType.GsDeleteAllDataNVMemory                          },
-            { 0x30, EscPosCmdType.GsDeleteSpecifiedRecord                          },
-            { 0x31, EscPosCmdType.GsStoreDataSpecifiedRecord                       },
-            { 0x32, EscPosCmdType.GsTransmitDataSpecifiedRecord                    },
-            { 0x33, EscPosCmdType.GsTransmitCapacityNVUserMemory                   },
-            { 0x34, EscPosCmdType.GsTransmitRemainingCapacityNVUserMemory          },
-            { 0x35, EscPosCmdType.GsTransmitKeycodeList                            },
-            { 0x36, EscPosCmdType.GsDeleteAllDataNVMemory                          }
+            { 0x00, EscPosCmdType.GsDeleteSpecifiedRecord },
+            { 0x01, EscPosCmdType.GsStoreDataSpecifiedRecord },
+            { 0x02, EscPosCmdType.GsTransmitDataSpecifiedRecord },
+            { 0x03, EscPosCmdType.GsTransmitCapacityNVUserMemory },
+            { 0x04, EscPosCmdType.GsTransmitRemainingCapacityNVUserMemory },
+            { 0x05, EscPosCmdType.GsTransmitKeycodeList },
+            { 0x06, EscPosCmdType.GsDeleteAllDataNVMemory },
+            { 0x30, EscPosCmdType.GsDeleteSpecifiedRecord },
+            { 0x31, EscPosCmdType.GsStoreDataSpecifiedRecord },
+            { 0x32, EscPosCmdType.GsTransmitDataSpecifiedRecord },
+            { 0x33, EscPosCmdType.GsTransmitCapacityNVUserMemory },
+            { 0x34, EscPosCmdType.GsTransmitRemainingCapacityNVUserMemory },
+            { 0x35, EscPosCmdType.GsTransmitKeycodeList },
+            { 0x36, EscPosCmdType.GsDeleteAllDataNVMemory }
         };
 
         /// <summary>
         /// GS(0x1D) ( E pL pH XX started printer command type information
         /// </summary>
-        private static readonly Dictionary<byte, EscPosCmdType> s_PrtGSEType = new Dictionary<byte, EscPosCmdType>()
+        private static readonly Dictionary<byte, EscPosCmdType> s_PrtGSEType = new()
         {
-            { 0x01, EscPosCmdType.GsChangeIntoUserSettingMode            },
-            { 0x02, EscPosCmdType.GsEndUserSettingMode                   },
-            { 0x03, EscPosCmdType.GsChangeMeomorySwitch                  },
-            { 0x04, EscPosCmdType.GsTransmitSettingsMemorySwitch         },
-            { 0x05, EscPosCmdType.GsSetCustomizeSettinValues             },
-            { 0x06, EscPosCmdType.GsTransmitCustomizeSettingValues       },
-            { 0x07, EscPosCmdType.GsCopyUserDefinedPage                  },
-            { 0x08, EscPosCmdType.GsDefineColumnFormatCharacterCodePage  },
-            { 0x09, EscPosCmdType.GsDefineRasterFormatCharacterCodePage  },
-            { 0x0A, EscPosCmdType.GsDeleteCharacterCodePage              },
-            { 0x0B, EscPosCmdType.GsSetSerialInterface                   },
-            { 0x0C, EscPosCmdType.GsTransmitSerialInterface              },
-            { 0x0D, EscPosCmdType.GsSetBluetoothInterface                },
-            { 0x0E, EscPosCmdType.GsTransmitBluetoothInterface           },
-            { 0x0F, EscPosCmdType.GsSetUSBInterface                      },
-            { 0x10, EscPosCmdType.GsTransmitUSBInterface                 },
-            { 0x30, EscPosCmdType.GsDeletePaperLayout                    },
-            { 0x31, EscPosCmdType.GsSetPaperLayout                       },
-            { 0x32, EscPosCmdType.GsTransmitPaperLayout                  },
-            { 0x33, EscPosCmdType.GsSetControlLabelPaperAndBlackMarks    },
+            { 0x01, EscPosCmdType.GsChangeIntoUserSettingMode },
+            { 0x02, EscPosCmdType.GsEndUserSettingMode },
+            { 0x03, EscPosCmdType.GsChangeMeomorySwitch },
+            { 0x04, EscPosCmdType.GsTransmitSettingsMemorySwitch },
+            { 0x05, EscPosCmdType.GsSetCustomizeSettingValues },
+            { 0x06, EscPosCmdType.GsTransmitCustomizeSettingValues },
+            { 0x07, EscPosCmdType.GsCopyUserDefinedPage },
+            { 0x08, EscPosCmdType.GsDefineColumnFormatCharacterCodePage },
+            { 0x09, EscPosCmdType.GsDefineRasterFormatCharacterCodePage },
+            { 0x0A, EscPosCmdType.GsDeleteCharacterCodePage },
+            { 0x0B, EscPosCmdType.GsSetSerialInterface },
+            { 0x0C, EscPosCmdType.GsTransmitSerialInterface },
+            { 0x0D, EscPosCmdType.GsSetBluetoothInterface },
+            { 0x0E, EscPosCmdType.GsTransmitBluetoothInterface },
+            { 0x0F, EscPosCmdType.GsSetUSBInterface },
+            { 0x10, EscPosCmdType.GsTransmitUSBInterface },
+            { 0x30, EscPosCmdType.GsDeletePaperLayout },
+            { 0x31, EscPosCmdType.GsSetPaperLayout },
+            { 0x32, EscPosCmdType.GsTransmitPaperLayout },
+            { 0x33, EscPosCmdType.GsSetControlLabelPaperAndBlackMarks },
             { 0x34, EscPosCmdType.GsTransmitControlSettingsLabelPaperAndBlackMarks },
-            { 0x63, EscPosCmdType.GsSetInternalBuzzerPatterns            },
-            { 0x64, EscPosCmdType.GsTransmitInternalBuzzerPatterns       }
+            { 0x63, EscPosCmdType.GsSetInternalBuzzerPatterns },
+            { 0x64, EscPosCmdType.GsTransmitInternalBuzzerPatterns }
         };
 
         /// <summary>
         /// GS(0x1D) ( G pL pH XX started printer command type information
         /// </summary>
-        private static readonly Dictionary<byte, EscPosCmdType> s_PrtGSGType = new Dictionary<byte, EscPosCmdType>()
+        private static readonly Dictionary<byte, EscPosCmdType> s_PrtGSGType = new()
         {
-            { 0x20, EscPosCmdType.GsTransmitStatusOfCutSheet                         },
-            { 0x30, EscPosCmdType.GsSelectSideOfSlipFaceOrBack                       },
+            { 0x20, EscPosCmdType.GsTransmitStatusOfCutSheet },
+            { 0x30, EscPosCmdType.GsSelectSideOfSlipFaceOrBack },
             { 0x3C, EscPosCmdType.GsReadMagneticInkCharacterAndTransmitReadingResult },
-            { 0x3D, EscPosCmdType.GsRetransmitMagneticInkCharacterReadingResult      },
-            { 0x40, EscPosCmdType.GsReadDataAndTransmitResultingInformation          },
-            { 0x41, EscPosCmdType.GsScanImageDataAndTransmitImageScanningResult      },
-            { 0x42, EscPosCmdType.GsRetransmitImageScanningResult                    },
-            { 0x43, EscPosCmdType.GsExecutePreScan                                   },
-            { 0x44, EscPosCmdType.GsDeleteImageScanningResultWithSpecifiedDataID     },
-            { 0x45, EscPosCmdType.GsDeleteAllImageScanningResult                     },
-            { 0x46, EscPosCmdType.GsTransmitDataIDListOfImageScanningResult          },
+            { 0x3D, EscPosCmdType.GsRetransmitMagneticInkCharacterReadingResult },
+            { 0x40, EscPosCmdType.GsReadDataAndTransmitResultingInformation },
+            { 0x41, EscPosCmdType.GsScanImageDataAndTransmitImageScanningResult },
+            { 0x42, EscPosCmdType.GsRetransmitImageScanningResult },
+            { 0x43, EscPosCmdType.GsExecutePreScan },
+            { 0x44, EscPosCmdType.GsDeleteImageScanningResultWithSpecifiedDataID },
+            { 0x45, EscPosCmdType.GsDeleteAllImageScanningResult },
+            { 0x46, EscPosCmdType.GsTransmitDataIDListOfImageScanningResult },
             { 0x47, EscPosCmdType.GsTransmitRemainingCapacityOfNVMemoryForImageDataStorage },
-            { 0x50, EscPosCmdType.GsSelectActiveSheet                                },
-            { 0x51, EscPosCmdType.GsStartPreProcessForCutSheetInsertion              },
-            { 0x52, EscPosCmdType.GsEndPreProcessForCutSheetInsertion                },
-            { 0x53, EscPosCmdType.GsExecuteWaitingProcessForCutSheetInsertion        },
-            { 0x54, EscPosCmdType.GsFeedToPrintStartingPositionForSlip               },
-            { 0x55, EscPosCmdType.GsFinishProcessingOfCutSheet                       }
+            { 0x50, EscPosCmdType.GsSelectActiveSheet },
+            { 0x51, EscPosCmdType.GsStartPreProcessForCutSheetInsertion },
+            { 0x52, EscPosCmdType.GsEndPreProcessForCutSheetInsertion },
+            { 0x53, EscPosCmdType.GsExecuteWaitingProcessForCutSheetInsertion },
+            { 0x54, EscPosCmdType.GsFeedToPrintStartingPositionForSlip },
+            { 0x55, EscPosCmdType.GsFinishProcessingOfCutSheet }
         };
 
         /// <summary>
         /// GS(0x1D) (or8 L pL pH/p0,p1,p2,p3 XX started printer graphics command type information
         /// </summary>
-        private static readonly Dictionary<byte, EscPosCmdType> s_PrtGSLType = new Dictionary<byte, EscPosCmdType>()
+        private static readonly Dictionary<byte, EscPosCmdType> s_PrtGSLType = new()
         {
-            { 0x00, EscPosCmdType.GsTransmitNVGraphicsMemoryCapacity                  },
-            { 0x01, EscPosCmdType.GsSetReferenceDotDensityGraphics                    },
-            { 0x02, EscPosCmdType.GsPrintGraphicsDataInPrintBuffer                    },
-            { 0x03, EscPosCmdType.GsTransmitRemainingCapacityNVGraphicsMemory         },
-            { 0x04, EscPosCmdType.GsTransmitRemainingCapacityDownloadGraphicsMemory   },
-            { 0x30, EscPosCmdType.GsTransmitNVGraphicsMemoryCapacity                  },
-            { 0x31, EscPosCmdType.GsSetReferenceDotDensityGraphics                    },
-            { 0x32, EscPosCmdType.GsPrintGraphicsDataInPrintBuffer                    },
-            { 0x33, EscPosCmdType.GsTransmitRemainingCapacityNVGraphicsMemory         },
-            { 0x34, EscPosCmdType.GsTransmitRemainingCapacityDownloadGraphicsMemory   },
-            { 0x40, EscPosCmdType.GsTransmitKeycodeListDefinedNVGraphics              },
-            { 0x41, EscPosCmdType.GsDeleteAllNVGraphicsData                           },
-            { 0x42, EscPosCmdType.GsDeleteSpecifiedNVGraphicsData                     },
-            { 0x43, EscPosCmdType.GsDefineNVGraphicsDataRasterW                       },
-            { 0x44, EscPosCmdType.GsDefineNVGraphicsDataColumnW                       },
-            { 0x45, EscPosCmdType.GsPrintSpecifiedNVGraphicsData                      },
-            { 0x50, EscPosCmdType.GsTransmitKeycodeListDefinedDownloadGraphics        },
-            { 0x51, EscPosCmdType.GsDeleteAllDownloadGraphicsData                     },
-            { 0x52, EscPosCmdType.GsDeleteSpecifiedDownloadGraphicsData               },
-            { 0x53, EscPosCmdType.GsDefineDownloadGraphicsDataRasterW                 },
-            { 0x54, EscPosCmdType.GsDefineDownloadGraphicsDataColumnW                 },
-            { 0x55, EscPosCmdType.GsPrintSpecifiedDownloadGraphicsData                },
-            { 0x70, EscPosCmdType.GsStoreGraphicsDataToPrintBufferRasterW             },
-            { 0x71, EscPosCmdType.GsStoreGraphicsDataToPrintBufferColumnW             }
+            { 0x00, EscPosCmdType.GsTransmitNVGraphicsMemoryCapacity },
+            { 0x01, EscPosCmdType.GsSetReferenceDotDensityGraphics },
+            { 0x02, EscPosCmdType.GsPrintGraphicsDataInPrintBuffer },
+            { 0x03, EscPosCmdType.GsTransmitRemainingCapacityNVGraphicsMemory },
+            { 0x04, EscPosCmdType.GsTransmitRemainingCapacityDownloadGraphicsMemory },
+            { 0x30, EscPosCmdType.GsTransmitNVGraphicsMemoryCapacity },
+            { 0x31, EscPosCmdType.GsSetReferenceDotDensityGraphics },
+            { 0x32, EscPosCmdType.GsPrintGraphicsDataInPrintBuffer },
+            { 0x33, EscPosCmdType.GsTransmitRemainingCapacityNVGraphicsMemory },
+            { 0x34, EscPosCmdType.GsTransmitRemainingCapacityDownloadGraphicsMemory },
+            { 0x40, EscPosCmdType.GsTransmitKeycodeListDefinedNVGraphics },
+            { 0x41, EscPosCmdType.GsDeleteAllNVGraphicsData },
+            { 0x42, EscPosCmdType.GsDeleteSpecifiedNVGraphicsData },
+            { 0x43, EscPosCmdType.GsDefineNVGraphicsDataRasterW },
+            { 0x44, EscPosCmdType.GsDefineNVGraphicsDataColumnW },
+            { 0x45, EscPosCmdType.GsPrintSpecifiedNVGraphicsData },
+            { 0x50, EscPosCmdType.GsTransmitKeycodeListDefinedDownloadGraphics },
+            { 0x51, EscPosCmdType.GsDeleteAllDownloadGraphicsData },
+            { 0x52, EscPosCmdType.GsDeleteSpecifiedDownloadGraphicsData },
+            { 0x53, EscPosCmdType.GsDefineDownloadGraphicsDataRasterW },
+            { 0x54, EscPosCmdType.GsDefineDownloadGraphicsDataColumnW },
+            { 0x55, EscPosCmdType.GsPrintSpecifiedDownloadGraphicsData },
+            { 0x70, EscPosCmdType.GsStoreGraphicsDataToPrintBufferRasterW },
+            { 0x71, EscPosCmdType.GsStoreGraphicsDataToPrintBufferColumnW }
         };
 
         /// <summary>
         /// GS(0x1D) ( k pL pH XX XX started printer barcode command type information
         /// </summary>
-        private static readonly Dictionary<string, EscPosCmdType> s_PrtGSkType = new Dictionary<string, EscPosCmdType>()
+        private static readonly Dictionary<string, EscPosCmdType> s_PrtGSkType = new()
         {
-            { "0A", EscPosCmdType.GsPDF417SetNumberOfColumns                  },
-            { "0B", EscPosCmdType.GsPDF417SetNumberOfRows                     },
-            { "0C", EscPosCmdType.GsPDF417SetWidthOfModule                    },
-            { "0D", EscPosCmdType.GsPDF417SetRowHeight                        },
-            { "0E", EscPosCmdType.GsPDF417SetErrorCollectionLevel             },
-            { "0F", EscPosCmdType.GsPDF417SelectOptions                       },
-            { "0P", EscPosCmdType.GsPDF417StoreData                           },
-            { "0Q", EscPosCmdType.GsPDF417PrintSymbolData                     },
-            { "0R", EscPosCmdType.GsPDF417TransmitSizeInformation             },
-            { "1A", EscPosCmdType.GsQRCodeSelectModel                         },
-            { "1C", EscPosCmdType.GsQRCodeSetSizeOfModule                     },
-            { "1E", EscPosCmdType.GsQRCodeSetErrorCollectionLevel             },
-            { "1P", EscPosCmdType.GsQRCodeStoreData                           },
-            { "1Q", EscPosCmdType.GsQRCodePrintSymbolData                     },
-            { "1R", EscPosCmdType.GsQRCodeTransmitSizeInformation             },
-            { "2A", EscPosCmdType.GsMaxiCodeSelectMode                        },
-            { "2P", EscPosCmdType.GsMaxiCodeStoreData                         },
-            { "2Q", EscPosCmdType.GsMaxiCodePrintSymbolData                   },
-            { "2R", EscPosCmdType.GsMaxiCodeTransmitSizeInformation           },
-            { "3C", EscPosCmdType.Gs2DGS1DBSetWidthOfModule                   },
-            { "3G", EscPosCmdType.Gs2DGS1DBSetExpandStackedMaximumWidth       },
-            { "3P", EscPosCmdType.Gs2DGS1DBStoreData                          },
-            { "3Q", EscPosCmdType.Gs2DGS1DBPrintSymbolData                    },
-            { "3R", EscPosCmdType.Gs2DGS1DBTransmitSizeInformation            },
-            { "4C", EscPosCmdType.GsCompositeSetWidthOfModule                 },
-            { "4G", EscPosCmdType.GsCompositeSetExpandStackedMaximumWidth     },
-            { "4H", EscPosCmdType.GsCompositeSelectHRICharacterFont           },
-            { "4P", EscPosCmdType.GsCompositeStoreData                        },
-            { "4Q", EscPosCmdType.GsCompositePrintSymbolData                  },
-            { "4R", EscPosCmdType.GsCompositeTransmitSizeInformation          },
-            { "5B", EscPosCmdType.GsAztecCodeSetModeTypesAndDataLayer         },
-            { "5C", EscPosCmdType.GsAztecCodeSetSizeOfModule                  },
-            { "5E", EscPosCmdType.GsAztecCodeSetErrorCollectionLevel          },
-            { "5P", EscPosCmdType.GsAztecCodeStoreData                        },
-            { "5Q", EscPosCmdType.GsAztecCodePrintSymbolData                  },
-            { "5R", EscPosCmdType.GsAztecCodeTransmitSizeInformation          },
-            { "6B", EscPosCmdType.GsDataMatrixSetSymbolTypeColumnsRows        },
-            { "6C", EscPosCmdType.GsDataMatrixSetSizeOfModule                 },
-            { "6P", EscPosCmdType.GsDataMatrixStoreData                       },
-            { "6Q", EscPosCmdType.GsDataMatrixPrintSymbolData                 },
-            { "6R", EscPosCmdType.GsDataMatrixTransmitSizeInformation         }
+            { "0A", EscPosCmdType.GsPDF417SetNumberOfColumns },
+            { "0B", EscPosCmdType.GsPDF417SetNumberOfRows },
+            { "0C", EscPosCmdType.GsPDF417SetWidthOfModule },
+            { "0D", EscPosCmdType.GsPDF417SetRowHeight },
+            { "0E", EscPosCmdType.GsPDF417SetErrorCollectionLevel },
+            { "0F", EscPosCmdType.GsPDF417SelectOptions },
+            { "0P", EscPosCmdType.GsPDF417StoreData },
+            { "0Q", EscPosCmdType.GsPDF417PrintSymbolData },
+            { "0R", EscPosCmdType.GsPDF417TransmitSizeInformation },
+            { "1A", EscPosCmdType.GsQRCodeSelectModel },
+            { "1C", EscPosCmdType.GsQRCodeSetSizeOfModule },
+            { "1E", EscPosCmdType.GsQRCodeSetErrorCollectionLevel },
+            { "1P", EscPosCmdType.GsQRCodeStoreData },
+            { "1Q", EscPosCmdType.GsQRCodePrintSymbolData },
+            { "1R", EscPosCmdType.GsQRCodeTransmitSizeInformation },
+            { "2A", EscPosCmdType.GsMaxiCodeSelectMode },
+            { "2P", EscPosCmdType.GsMaxiCodeStoreData },
+            { "2Q", EscPosCmdType.GsMaxiCodePrintSymbolData },
+            { "2R", EscPosCmdType.GsMaxiCodeTransmitSizeInformation },
+            { "3C", EscPosCmdType.GsD2GS1DBSetWidthOfModule },
+            { "3G", EscPosCmdType.GsD2GS1DBSetExpandStackedMaximumWidth },
+            { "3P", EscPosCmdType.GsD2GS1DBStoreData },
+            { "3Q", EscPosCmdType.GsD2GS1DBPrintSymbolData },
+            { "3R", EscPosCmdType.GsD2GS1DBTransmitSizeInformation },
+            { "4C", EscPosCmdType.GsCompositeSetWidthOfModule },
+            { "4G", EscPosCmdType.GsCompositeSetExpandStackedMaximumWidth },
+            { "4H", EscPosCmdType.GsCompositeSelectHRICharacterFont },
+            { "4P", EscPosCmdType.GsCompositeStoreData },
+            { "4Q", EscPosCmdType.GsCompositePrintSymbolData },
+            { "4R", EscPosCmdType.GsCompositeTransmitSizeInformation },
+            { "5B", EscPosCmdType.GsAztecCodeSetModeTypesAndDataLayer },
+            { "5C", EscPosCmdType.GsAztecCodeSetSizeOfModule },
+            { "5E", EscPosCmdType.GsAztecCodeSetErrorCollectionLevel },
+            { "5P", EscPosCmdType.GsAztecCodeStoreData },
+            { "5Q", EscPosCmdType.GsAztecCodePrintSymbolData },
+            { "5R", EscPosCmdType.GsAztecCodeTransmitSizeInformation },
+            { "6B", EscPosCmdType.GsDataMatrixSetSymbolTypeColumnsRows },
+            { "6C", EscPosCmdType.GsDataMatrixSetSizeOfModule },
+            { "6P", EscPosCmdType.GsDataMatrixStoreData },
+            { "6Q", EscPosCmdType.GsDataMatrixPrintSymbolData },
+            { "6R", EscPosCmdType.GsDataMatrixTransmitSizeInformation }
         };
 
         /// <summary>
@@ -236,30 +235,13 @@ namespace kunif.EscPosUtils
                 switch (ctlByte1)
                 {
                     case 0x28: // GS (
-                        switch (ctlByte2)
+                        ctlType = ctlByte2 switch
                         {
-                            case 0x41: // GS ( A
-                            case 0x42: // GS ( B
-                            case 0x43: // GS ( C
-                            case 0x44: // GS ( D
-                            case 0x45: // GS ( E
-                            case 0x47: // GS ( G
-                            case 0x48: // GS ( H
-                            case 0x4B: // GS ( K
-                            case 0x4C: // GS ( L
-                            case 0x4D: // GS ( M
-                            case 0x4E: // GS ( N
-                            case 0x50: // GS ( P
-                            case 0x51: // GS ( Q
-                            case 0x6B: // GS ( k
-                            case 0x7A: // GS ( z
-                                ctlType = EscPosCmdType.None;
-                                break;
-
-                            default: // GS ( ??
-                                ctlType = EscPosCmdType.GsUnknown;
-                                break;
-                        }
+                            // GS ( A,B,C,D,E,G,H,K,L,M,N,P,Q,k,z
+                            0x41 or 0x42 or 0x43 or 0x44 or 0x45 or 0x47 or 0x48 or 0x4B or 0x4C or 0x4D or 0x4E or 0x50 or 0x51 or 0x6B or 0x7A => EscPosCmdType.None,
+                            // GS ( ??
+                            _ => EscPosCmdType.GsUnknown,
+                        };
                         if (ctlType != EscPosCmdType.GsUnknown)
                         {
                             byte ctlByte5 = (byte)(((curIndex + 5) < dataLength) ? baData[curIndex + 5] : 0xFF);

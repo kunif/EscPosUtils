@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020 Kunio Fukuchi
+   Copyright (C) 2020-2022 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -33,48 +33,48 @@ namespace kunif.EscPosUtils
         /// <summary>
         /// ESC(0x1B) XX started fixed size printer command type and related length information
         /// </summary>
-        private static readonly Dictionary<byte, SeqInfo> s_PrtESCType = new Dictionary<byte, SeqInfo>()
+        private static readonly Dictionary<byte, SeqInfo> s_PrtESCType = new()
         {
-            { 0x0C, new SeqInfo { seqtype = EscPosCmdType.EscPageModeFormFeed,                         length = 2 } },
-            { 0x20, new SeqInfo { seqtype = EscPosCmdType.EscRightSideSpacing,                         length = 3 } },
-            { 0x21, new SeqInfo { seqtype = EscPosCmdType.EscSelectPrintMode,                          length = 3 } },
-            { 0x24, new SeqInfo { seqtype = EscPosCmdType.EscAbsoluteVerticalPosition,                 length = 4 } },
-            { 0x25, new SeqInfo { seqtype = EscPosCmdType.EscSelectUserDefinedCharacterSet,            length = 3 } },
-            { 0x2D, new SeqInfo { seqtype = EscPosCmdType.EscUnderlineMode,                            length = 3 } },
-            { 0x32, new SeqInfo { seqtype = EscPosCmdType.EscSelectDefaultLineSpacing,                 length = 2 } },
-            { 0x33, new SeqInfo { seqtype = EscPosCmdType.EscLineSpacing,                              length = 3 } },
-            { 0x3C, new SeqInfo { seqtype = EscPosCmdType.EscReturnHome,                               length = 2 } },
-            { 0x3D, new SeqInfo { seqtype = EscPosCmdType.EscSelectPeripheralDevice,                   length = 3 } },
-            { 0x3F, new SeqInfo { seqtype = EscPosCmdType.EscCancelUserDefinedCharacters,              length = 3 } },
-            { 0x40, new SeqInfo { seqtype = EscPosCmdType.EscInitialize,                               length = 2 } },
-            { 0x43, new SeqInfo { seqtype = EscPosCmdType.EscSetCutSheetEjectLength,                   length = 3 } },
-            { 0x45, new SeqInfo { seqtype = EscPosCmdType.EscTurnEmphasizedMode,                       length = 3 } },
-            { 0x46, new SeqInfo { seqtype = EscPosCmdType.EscSetCancelCutSheetReverseEject,            length = 3 } },
-            { 0x47, new SeqInfo { seqtype = EscPosCmdType.EscTurnDoubleStrikeMode,                     length = 3 } },
-            { 0x4A, new SeqInfo { seqtype = EscPosCmdType.EscPrintAndFeedPaper,                        length = 3 } },
-            { 0x4B, new SeqInfo { seqtype = EscPosCmdType.EscPrintAndReverseFeed,                      length = 3 } },
-            { 0x4C, new SeqInfo { seqtype = EscPosCmdType.EscSelectPageMode,                           length = 2 } },
-            { 0x4D, new SeqInfo { seqtype = EscPosCmdType.EscSelectCharacterFont,                      length = 3 } },
-            { 0x52, new SeqInfo { seqtype = EscPosCmdType.EscSelectInternationalCharacterSet,          length = 3 } },
-            { 0x53, new SeqInfo { seqtype = EscPosCmdType.EscSelectStandardMode,                       length = 2 } },
-            { 0x54, new SeqInfo { seqtype = EscPosCmdType.EscSelectPrintDirection,                     length = 3 } },
-            { 0x55, new SeqInfo { seqtype = EscPosCmdType.EscTurnUnidirectionalPrintMode,              length = 3 } },
-            { 0x56, new SeqInfo { seqtype = EscPosCmdType.EscTurn90digreeClockwiseRotationMode,        length = 3 } },
-            { 0x57, new SeqInfo { seqtype = EscPosCmdType.EscSetPrintAreaInPageMode,                   length = 10 } },
-            { 0x5C, new SeqInfo { seqtype = EscPosCmdType.EscSetRelativeHprizontalPrintPosition,       length = 4 } },
-            { 0x61, new SeqInfo { seqtype = EscPosCmdType.EscSelectJustification,                      length = 3 } },
-            { 0x64, new SeqInfo { seqtype = EscPosCmdType.EscPrintAndFeedNLines,                       length = 3 } },
-            { 0x65, new SeqInfo { seqtype = EscPosCmdType.EscPrintAndReverseFeedNLines,                length = 3 } },
-            { 0x66, new SeqInfo { seqtype = EscPosCmdType.EscCutSheetWaitTime,                         length = 4 } },
-            { 0x69, new SeqInfo { seqtype = EscPosCmdType.EscObsoletePartialCut1Point,                 length = 2 } },
-            { 0x6D, new SeqInfo { seqtype = EscPosCmdType.EscObsoletePartialCut3Point,                 length = 2 } },
-            { 0x70, new SeqInfo { seqtype = EscPosCmdType.EscGeneratePulse,                            length = 5 } },
-            { 0x71, new SeqInfo { seqtype = EscPosCmdType.EscReleasePaper,                             length = 2 } },
-            { 0x72, new SeqInfo { seqtype = EscPosCmdType.EscSelectPrinterColor,                       length = 3 } },
-            { 0x74, new SeqInfo { seqtype = EscPosCmdType.EscSelectCharacterCodeTable,                 length = 3 } },
-            { 0x75, new SeqInfo { seqtype = EscPosCmdType.EscObsoleteTransmitPeripheralDeviceStatus,   length = 3 } },
-            { 0x76, new SeqInfo { seqtype = EscPosCmdType.EscObsoleteTransmitPaperSensorStatus,        length = 2 } },
-            { 0x7B, new SeqInfo { seqtype = EscPosCmdType.EscTurnUpsideDownPrintMode,                  length = 3 } }
+            { 0x0C, new SeqInfo { seqtype = EscPosCmdType.EscPageModeFormFeed, length = 2 } },
+            { 0x20, new SeqInfo { seqtype = EscPosCmdType.EscRightSideSpacing, length = 3 } },
+            { 0x21, new SeqInfo { seqtype = EscPosCmdType.EscSelectPrintMode, length = 3 } },
+            { 0x24, new SeqInfo { seqtype = EscPosCmdType.EscAbsoluteHorizontalPrintPosition, length = 4 } },
+            { 0x25, new SeqInfo { seqtype = EscPosCmdType.EscSelectUserDefinedCharacterSet, length = 3 } },
+            { 0x2D, new SeqInfo { seqtype = EscPosCmdType.EscUnderlineMode, length = 3 } },
+            { 0x32, new SeqInfo { seqtype = EscPosCmdType.EscSelectDefaultLineSpacing, length = 2 } },
+            { 0x33, new SeqInfo { seqtype = EscPosCmdType.EscLineSpacing, length = 3 } },
+            { 0x3C, new SeqInfo { seqtype = EscPosCmdType.EscReturnHome, length = 2 } },
+            { 0x3D, new SeqInfo { seqtype = EscPosCmdType.EscSelectPeripheralDevice, length = 3 } },
+            { 0x3F, new SeqInfo { seqtype = EscPosCmdType.EscCancelUserDefinedCharacters, length = 3 } },
+            { 0x40, new SeqInfo { seqtype = EscPosCmdType.EscInitialize, length = 2 } },
+            { 0x43, new SeqInfo { seqtype = EscPosCmdType.EscSetCutSheetEjectLength, length = 3 } },
+            { 0x45, new SeqInfo { seqtype = EscPosCmdType.EscTurnEmphasizedMode, length = 3 } },
+            { 0x46, new SeqInfo { seqtype = EscPosCmdType.EscSetCancelCutSheetReverseEject, length = 3 } },
+            { 0x47, new SeqInfo { seqtype = EscPosCmdType.EscTurnDoubleStrikeMode, length = 3 } },
+            { 0x4A, new SeqInfo { seqtype = EscPosCmdType.EscPrintAndFeedPaper, length = 3 } },
+            { 0x4B, new SeqInfo { seqtype = EscPosCmdType.EscPrintAndReverseFeed, length = 3 } },
+            { 0x4C, new SeqInfo { seqtype = EscPosCmdType.EscSelectPageMode, length = 2 } },
+            { 0x4D, new SeqInfo { seqtype = EscPosCmdType.EscSelectCharacterFont, length = 3 } },
+            { 0x52, new SeqInfo { seqtype = EscPosCmdType.EscSelectInternationalCharacterSet, length = 3 } },
+            { 0x53, new SeqInfo { seqtype = EscPosCmdType.EscSelectStandardMode, length = 2 } },
+            { 0x54, new SeqInfo { seqtype = EscPosCmdType.EscSelectPrintDirection, length = 3 } },
+            { 0x55, new SeqInfo { seqtype = EscPosCmdType.EscTurnUnidirectionalPrintMode, length = 3 } },
+            { 0x56, new SeqInfo { seqtype = EscPosCmdType.EscTurn90digreeClockwiseRotationMode, length = 3 } },
+            { 0x57, new SeqInfo { seqtype = EscPosCmdType.EscSetPrintAreaInPageMode, length = 10 } },
+            { 0x5C, new SeqInfo { seqtype = EscPosCmdType.EscSetRelativeHorizontalPrintPosition, length = 4 } },
+            { 0x61, new SeqInfo { seqtype = EscPosCmdType.EscSelectJustification, length = 3 } },
+            { 0x64, new SeqInfo { seqtype = EscPosCmdType.EscPrintAndFeedNLines, length = 3 } },
+            { 0x65, new SeqInfo { seqtype = EscPosCmdType.EscPrintAndReverseFeedNLines, length = 3 } },
+            { 0x66, new SeqInfo { seqtype = EscPosCmdType.EscCutSheetWaitTime, length = 4 } },
+            { 0x69, new SeqInfo { seqtype = EscPosCmdType.EscObsoletePartialCut1Point, length = 2 } },
+            { 0x6D, new SeqInfo { seqtype = EscPosCmdType.EscObsoletePartialCut3Point, length = 2 } },
+            { 0x70, new SeqInfo { seqtype = EscPosCmdType.EscGeneratePulse, length = 5 } },
+            { 0x71, new SeqInfo { seqtype = EscPosCmdType.EscReleasePaper, length = 2 } },
+            { 0x72, new SeqInfo { seqtype = EscPosCmdType.EscSelectPrinterColor, length = 3 } },
+            { 0x74, new SeqInfo { seqtype = EscPosCmdType.EscSelectCharacterCodeTable, length = 3 } },
+            { 0x75, new SeqInfo { seqtype = EscPosCmdType.EscObsoleteTransmitPeripheralDeviceStatus, length = 3 } },
+            { 0x76, new SeqInfo { seqtype = EscPosCmdType.EscObsoleteTransmitPaperSensorStatus, length = 2 } },
+            { 0x7B, new SeqInfo { seqtype = EscPosCmdType.EscTurnUpsideDownPrintMode, length = 3 } }
         };
 
         /// <summary>
@@ -278,14 +278,14 @@ namespace kunif.EscPosUtils
         /// <summary>
         /// ESC(0x1B) XX started fixed size linedisplay command type and related length information
         /// </summary>
-        private static readonly Dictionary<byte, SeqInfo> s_VfdESCType = new Dictionary<byte, SeqInfo>()
+        private static readonly Dictionary<byte, SeqInfo> s_VfdESCType = new()
         {
             { 0x25, new SeqInfo { seqtype = EscPosCmdType.VfdEscSelectCancelUserDefinedCharacterSet, length = 3 } },
-            { 0x3D, new SeqInfo { seqtype = EscPosCmdType.VfdEscSelectPeripheralDevice,              length = 3 } },
-            { 0x3F, new SeqInfo { seqtype = EscPosCmdType.VfdEscCancelUserDefinedCharacters,         length = 3 } },
-            { 0x40, new SeqInfo { seqtype = EscPosCmdType.VfdEscInitialize,                          length = 2 } },
-            { 0x52, new SeqInfo { seqtype = EscPosCmdType.VfdEscSelectInternationalCharacterSet,     length = 3 } },
-            { 0x74, new SeqInfo { seqtype = EscPosCmdType.VfdEscSelectCharacterCodeTable,            length = 3 } }
+            { 0x3D, new SeqInfo { seqtype = EscPosCmdType.VfdEscSelectPeripheralDevice, length = 3 } },
+            { 0x3F, new SeqInfo { seqtype = EscPosCmdType.VfdEscCancelUserDefinedCharacters, length = 3 } },
+            { 0x40, new SeqInfo { seqtype = EscPosCmdType.VfdEscInitialize, length = 2 } },
+            { 0x52, new SeqInfo { seqtype = EscPosCmdType.VfdEscSelectInternationalCharacterSet, length = 3 } },
+            { 0x74, new SeqInfo { seqtype = EscPosCmdType.VfdEscSelectCharacterCodeTable, length = 3 } }
         };
 
         /// <summary>

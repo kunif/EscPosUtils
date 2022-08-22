@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020 Kunio Fukuchi
+   Copyright (C) 2020-2022 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -34,66 +34,66 @@ namespace kunif.EscPosUtils
         /// <summary>
         /// FS(0x1C) XX started fixed size printer command type and related length information
         /// </summary>
-        private static readonly Dictionary<byte, SeqInfo> s_PrtFSType = new Dictionary<byte, SeqInfo>()
+        private static readonly Dictionary<byte, SeqInfo> s_PrtFSType = new()
         {
-            { 0x21, new SeqInfo { seqtype = EscPosCmdType.FsSelectPrintModeKanji,             length = 3 } },
-            { 0x26, new SeqInfo { seqtype = EscPosCmdType.FsSelectKanjiCharacterMode,         length = 2 } },
-            { 0x2D, new SeqInfo { seqtype = EscPosCmdType.FsTurnKanjiUnderlineMode,           length = 3 } },
-            { 0x2E, new SeqInfo { seqtype = EscPosCmdType.FsCancelKanjiCharacterMode,         length = 2 } },
+            { 0x21, new SeqInfo { seqtype = EscPosCmdType.FsSelectPrintModeKanji, length = 3 } },
+            { 0x26, new SeqInfo { seqtype = EscPosCmdType.FsSelectKanjiCharacterMode, length = 2 } },
+            { 0x2D, new SeqInfo { seqtype = EscPosCmdType.FsTurnKanjiUnderlineMode, length = 3 } },
+            { 0x2E, new SeqInfo { seqtype = EscPosCmdType.FsCancelKanjiCharacterMode, length = 2 } },
             { 0x3F, new SeqInfo { seqtype = EscPosCmdType.FsCancelUserDefinedKanjiCharacters, length = 4 } },
-            { 0x43, new SeqInfo { seqtype = EscPosCmdType.FsSelectKanjiCharacterCodeSystem,   length = 3 } },
-            { 0x4C, new SeqInfo { seqtype = EscPosCmdType.FsSelectDoubleDensityPageMode,      length = 2 } },
-            { 0x53, new SeqInfo { seqtype = EscPosCmdType.FsSetKanjiCharacerSpacing,          length = 4 } },
-            { 0x57, new SeqInfo { seqtype = EscPosCmdType.FsTurnQuadrupleSizeMode,            length = 3 } },
+            { 0x43, new SeqInfo { seqtype = EscPosCmdType.FsSelectKanjiCharacterCodeSystem, length = 3 } },
+            { 0x4C, new SeqInfo { seqtype = EscPosCmdType.FsSelectDoubleDensityPageMode, length = 2 } },
+            { 0x53, new SeqInfo { seqtype = EscPosCmdType.FsSetKanjiCharacerSpacing, length = 4 } },
+            { 0x57, new SeqInfo { seqtype = EscPosCmdType.FsTurnQuadrupleSizeMode, length = 3 } },
             { 0x62, new SeqInfo { seqtype = EscPosCmdType.FsObsoleteRequestTransmissionOfCheckPaperReadingResult, length = 2 } },
-            { 0x63, new SeqInfo { seqtype = EscPosCmdType.FsCleanMICRMechanism,               length = 2 } },
-            { 0x70, new SeqInfo { seqtype = EscPosCmdType.FsObsoletePrintNVBitimage,          length = 4 } }
+            { 0x63, new SeqInfo { seqtype = EscPosCmdType.FsCleanMICRMechanism, length = 2 } },
+            { 0x70, new SeqInfo { seqtype = EscPosCmdType.FsObsoletePrintNVBitimage, length = 4 } }
         };
 
         /// <summary>
         /// FS(0x1C) ( E pL pH XX started printer command type information
         /// </summary>
-        private static readonly Dictionary<byte, EscPosCmdType> s_PrtFSEType = new Dictionary<byte, EscPosCmdType>()
+        private static readonly Dictionary<byte, EscPosCmdType> s_PrtFSEType = new()
         {
-            { 0x3C, EscPosCmdType.FsCancelSetValuesTopBottomLogo                      },
-            { 0x3D, EscPosCmdType.FsTransmitSetValuesTopBottomLogo                    },
-            { 0x3E, EscPosCmdType.FsSetTopLogoPrinting                                },
-            { 0x3F, EscPosCmdType.FsSetBottomLogoPrinting                             },
-            { 0x40, EscPosCmdType.FsMakeExtendSettingsTopBottomLogoPrinting           },
-            { 0x41, EscPosCmdType.FsEnableDisableTopBottomLogoPrinting                }
+            { 0x3C, EscPosCmdType.FsCancelSetValuesTopBottomLogo },
+            { 0x3D, EscPosCmdType.FsTransmitSetValuesTopBottomLogo },
+            { 0x3E, EscPosCmdType.FsSetTopLogoPrinting },
+            { 0x3F, EscPosCmdType.FsSetBottomLogoPrinting },
+            { 0x40, EscPosCmdType.FsMakeExtendSettingsTopBottomLogoPrinting },
+            { 0x41, EscPosCmdType.FsEnableDisableTopBottomLogoPrinting }
         };
 
         /// <summary>
         /// FS(0x1C) (or8 L pL pH/p0,p1,p2,p3 XX  started printer command type information
         /// </summary>
-        private static readonly Dictionary<byte, EscPosCmdType> s_PrtFSLType = new Dictionary<byte, EscPosCmdType>()
+        private static readonly Dictionary<byte, EscPosCmdType> s_PrtFSLType = new()
         {
-            { 0x21, EscPosCmdType.FsPaperLayoutSetting                                },
-            { 0x22, EscPosCmdType.FsPaperLayoutInformationTransmission                },
-            { 0x30, EscPosCmdType.FsTransmitPositioningInformation                    },
-            { 0x41, EscPosCmdType.FsFeedPaperLabelPeelingPosition                     },
-            { 0x42, EscPosCmdType.FsFeedPaperCuttingPosition                          },
-            { 0x43, EscPosCmdType.FsFeedPaperPrintStartingPosition                    },
-            { 0x50, EscPosCmdType.FsPaperLayoutErrorSpecialMarginSetting              }
+            { 0x21, EscPosCmdType.FsPaperLayoutSetting },
+            { 0x22, EscPosCmdType.FsPaperLayoutInformationTransmission },
+            { 0x30, EscPosCmdType.FsTransmitPositioningInformation },
+            { 0x41, EscPosCmdType.FsFeedPaperLabelPeelingPosition },
+            { 0x42, EscPosCmdType.FsFeedPaperCuttingPosition },
+            { 0x43, EscPosCmdType.FsFeedPaperPrintStartingPosition },
+            { 0x50, EscPosCmdType.FsPaperLayoutErrorSpecialMarginSetting }
         };
 
         /// <summary>
         /// FS(0x1C) ( g pL pH XX  started printer command type information
         /// </summary>
-        private static readonly Dictionary<byte, EscPosCmdType> s_PrtFSgType = new Dictionary<byte, EscPosCmdType>()
+        private static readonly Dictionary<byte, EscPosCmdType> s_PrtFSgType = new()
         {
-            { 0x20, EscPosCmdType.FsSelectImageScannerCommandSettings                             },
-            { 0x28, EscPosCmdType.FsSetBasicOperationOfImageScanner                               },
-            { 0x29, EscPosCmdType.FsSetScanningArea                                               },
-            { 0x32, EscPosCmdType.FsSelectCompressionMethodForImageData                           },
-            { 0x38, EscPosCmdType.FsDeleteCroppingArea                                            },
-            { 0x39, EscPosCmdType.FsSetCroppingArea                                               },
-            { 0x3C, EscPosCmdType.FsSelectTransmissionFormatForImageScanningResult                },
-            { 0x50, EscPosCmdType.FsTransmitSettingValueForBasicOperationsOfImageScanner          },
-            { 0x51, EscPosCmdType.FsTransmitSettingValueOfScanningArea                            },
-            { 0x5A, EscPosCmdType.FsTransmitSettingValueOfCompressionMethdForImageData            },
-            { 0x61, EscPosCmdType.FsTransmitSettingValueOfCroppingArea                            },
-            { 0x64, EscPosCmdType.FsTransmitSettingValueOfTransmissionFormatForImageScanningResult}
+            { 0x20, EscPosCmdType.FsSelectImageScannerCommandSettings },
+            { 0x28, EscPosCmdType.FsSetBasicOperationOfImageScanner },
+            { 0x29, EscPosCmdType.FsSetScanningArea },
+            { 0x32, EscPosCmdType.FsSelectCompressionMethodForImageData },
+            { 0x38, EscPosCmdType.FsDeleteCroppingArea },
+            { 0x39, EscPosCmdType.FsSetCroppingArea },
+            { 0x3C, EscPosCmdType.FsSelectTransmissionFormatForImageScanningResult },
+            { 0x50, EscPosCmdType.FsTransmitSettingValueForBasicOperationsOfImageScanner },
+            { 0x51, EscPosCmdType.FsTransmitSettingValueOfScanningArea },
+            { 0x5A, EscPosCmdType.FsTransmitSettingValueOfCompressionMethdForImageData },
+            { 0x61, EscPosCmdType.FsTransmitSettingValueOfCroppingArea },
+            { 0x64, EscPosCmdType.FsTransmitSettingValueOfTransmissionFormatForImageScanningResult }
         };
 
         /// <summary>
@@ -113,22 +113,13 @@ namespace kunif.EscPosUtils
                 {
                     case 0x28: // FS (
                         blockLength = 3;
-                        switch (ctlByte2)
+                        ctlType = ctlByte2 switch
                         {
-                            case 0x41: // FS ( A
-                            case 0x43: // FS ( C
-                            case 0x45: // FS ( E
-                            case 0x4C: // FS ( L
-                            case 0x65: // FS ( e
-                            case 0x66: // FS ( f
-                            case 0x67: // FS ( g
-                                ctlType = EscPosCmdType.None;
-                                break;
-
-                            default: // FS ( ??
-                                ctlType = EscPosCmdType.FsUnknown;
-                                break;
-                        }
+                            // FS ( A,C,E,L,e,f,g
+                            0x41 or 0x43 or 0x45 or 0x4C or 0x65 or 0x66 or 0x67 => EscPosCmdType.None,
+                            // FS ( ??
+                            _ => EscPosCmdType.FsUnknown,
+                        };
                         if (ctlType != EscPosCmdType.FsUnknown)
                         {
                             byte ctlByte5 = (byte)(((curIndex + 5) < dataLength) ? baData[curIndex + 5] : 0xFF);

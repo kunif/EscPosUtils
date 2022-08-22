@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020 Kunio Fukuchi
+   Copyright (C) 2020-2022 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -107,11 +107,12 @@ namespace kunif.EscPosDecode
 
             if (stdout)
             {
+                Console.OutputEncoding = Encoding.UTF8;
                 Console.Write(result);
             }
             else
             {
-                WritedFile(outputpath, result);
+                WriteFile(outputpath, result);
             }
             if (graphicsoutput && graphicsexist)
             {
@@ -132,12 +133,12 @@ namespace kunif.EscPosDecode
         {
             Boolean prtutf8 = false;
             Encoding prtencoding = Encoding.Default;
-            Dictionary<byte, string> prtembedded = new Dictionary<byte, string>();
-            Dictionary<string, string> prtreplaced = new Dictionary<string, string>();
-            UTF8Encoding utf8encoding = new UTF8Encoding(); ;
+            Dictionary<byte, string> prtembedded = new();
+            Dictionary<string, string> prtreplaced = new();
+            UTF8Encoding utf8encoding = new(); ;
             Encoding vfdencoding = Encoding.Default;
-            Dictionary<byte, string> vfdembedded = new Dictionary<byte, string>();
-            Dictionary<string, string> vfdreplaced = new Dictionary<string, string>();
+            Dictionary<byte, string> vfdembedded = new();
+            Dictionary<string, string> vfdreplaced = new();
 
             try
             {
@@ -271,7 +272,7 @@ namespace kunif.EscPosDecode
                     case EscPosCmdType.PrtPrintables:
                         try
                         {
-                            List<string> listwork = new List<string>();
+                            List<string> listwork = new();
                             if (prtutf8)
                             {
                                 listwork.AddRange(utf8encoding.GetChars(item.cmddata).Select(c => c.ToString()));
@@ -284,7 +285,7 @@ namespace kunif.EscPosDecode
                             {
                                 listwork.AddRange(prtencoding.GetChars(item.cmddata).Select(c => c.ToString()));
                             }
-                            item.paramdetail = string.Join("",(prtICS == 0 ? listwork : listwork.Select(s => (prtreplaced.ContainsKey(s) ? prtreplaced[s] : s))));
+                            item.paramdetail = string.Join("", (prtICS == 0 ? listwork : listwork.Select(s => (prtreplaced.ContainsKey(s) ? prtreplaced[s] : s))));
                         }
                         catch { }
                         break;
@@ -354,7 +355,7 @@ namespace kunif.EscPosDecode
                     case EscPosCmdType.VfdDisplayables:
                         try
                         {
-                            List<string> listwork = new List<string>();
+                            List<string> listwork = new();
                             if (vfdcodepage < 0x100)
                             {
                                 listwork.AddRange(item.cmddata.Select(c => vfdembedded[c]));
@@ -371,6 +372,7 @@ namespace kunif.EscPosDecode
             }
             return escposlist;
         }
+
         private static void Outputgraphics(List<EscPosCmd> escposlist)
         {
             int serialnumber = 0;
@@ -405,6 +407,7 @@ namespace kunif.EscPosDecode
                             }
                             catch { }
                             break;
+
                         case EscPosCmdType.GsDefineColumnFormatCharacterCodePage:
                         case EscPosCmdType.GsDefineRasterFormatCharacterCodePage:
                             try
@@ -423,6 +426,7 @@ namespace kunif.EscPosDecode
                             }
                             catch { }
                             break;
+
                         case EscPosCmdType.GsDefineNVGraphicsDataRasterW:
                         case EscPosCmdType.GsDefineNVGraphicsDataRasterDW:
                         case EscPosCmdType.GsDefineNVGraphicsDataColumnW:
@@ -447,6 +451,7 @@ namespace kunif.EscPosDecode
                             }
                             catch { }
                             break;
+
                         case EscPosCmdType.FsDefineUserDefinedKanjiCharacters2424:
                         case EscPosCmdType.FsDefineUserDefinedKanjiCharacters2024:
                         case EscPosCmdType.FsDefineUserDefinedKanjiCharacters1616:
@@ -460,6 +465,7 @@ namespace kunif.EscPosDecode
                             }
                             catch { }
                             break;
+
                         case EscPosCmdType.EscSelectBitImageMode:
                         case EscPosCmdType.FsObsoleteDefineNVBitimage:
                         case EscPosCmdType.GsStoreGraphicsDataToPrintBufferRasterW:
@@ -467,8 +473,6 @@ namespace kunif.EscPosDecode
                         case EscPosCmdType.GsStoreGraphicsDataToPrintBufferColumnW:
                         case EscPosCmdType.GsStoreGraphicsDataToPrintBufferColumnDW:
                         case EscPosCmdType.GsObsoleteDefineDownloadedBitimage:
-                        case EscPosCmdType.GsDefineWindowsBMPNVGraphicsData:
-                        case EscPosCmdType.GsDefineWindowsBMPDownloadGraphicsData:
                         case EscPosCmdType.GsObsoletePrintVariableVerticalSizeBitimage:
                         case EscPosCmdType.GsObsoletePrintRasterBitimage:
                             try
@@ -480,16 +484,28 @@ namespace kunif.EscPosDecode
                             }
                             catch { }
                             break;
+
+                        case EscPosCmdType.GsDefineWindowsBMPNVGraphicsData:
+                        case EscPosCmdType.GsDefineWindowsBMPDownloadGraphicsData:
+                            try
+                            {
+                                string filename = graphicspath + "\\" + serialnumber.ToString("D4") + "_" + item.cmdtype.ToString() + ".bmp";
+                                File.WriteAllBytes(filename, (byte[])item.somebinary);
+                                serialnumber++;
+                            }
+                            catch { }
+                            break;
                     }
                 }
             }
         }
+
         private static byte[] ReadFile(string filePath)
         {
             byte[] buffer = Array.Empty<byte>();
             try
             {
-                using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
                 buffer = new byte[fs.Length];
                 fs.Read(buffer, 0, buffer.Length);
             }
@@ -497,13 +513,13 @@ namespace kunif.EscPosDecode
             return buffer;
         }
 
-        private static void WritedFile(string filePath, string data)
+        private static void WriteFile(string filePath, string data)
         {
             try
             {
                 FileMode mode = File.Exists(filePath) ? FileMode.Truncate : FileMode.Create;
-                FileStream ostrm = new FileStream(filePath, mode, FileAccess.Write);
-                using var fs = new StreamWriter(ostrm);
+                using FileStream ostrm = new(filePath, mode, FileAccess.Write);
+                using StreamWriter fs = new(ostrm);
                 fs.Write(data);
             }
             catch { }
@@ -528,6 +544,7 @@ namespace kunif.EscPosDecode
             Console.WriteLine("  -M FontPattern :  specify CJK MBCS supported font size pattern 1 to 5. default is 1.");
             Console.WriteLine("  -V FontPattern :  specify LineDisplay supported font size pattern 1 or 2. default is 1.");
         }
+
         private static void HelpFontPattern()
         {
             Console.WriteLine("Supported Font size pattern:");
@@ -561,6 +578,7 @@ namespace kunif.EscPosDecode
             Console.WriteLine("     Width Height Width Height");
             Console.WriteLine("        8 x 16       5 x 7");
         }
+
         private static void HelpCodePage()
         {
             Console.WriteLine("Supported CodePgae list:");
@@ -593,6 +611,7 @@ namespace kunif.EscPosDecode
             Console.WriteLine("  66: Devanagari  67: Bengali     68: Tamil       69: Telugu      70: Assamese    71: Oriya");
             Console.WriteLine("  72: Kannada     73: Malayalam   74: Gujarati    75: Punjabi     82: Marathi");
         }
+
         private static int Options(string[] args)
         {
             int result = 0;
@@ -711,7 +730,7 @@ namespace kunif.EscPosDecode
                             try
                             {
                                 byte bwork = Convert.ToByte(args[i]);
-                                if (EscPosDecoder.s_StringESCRICS.ContainsKey(bwork))
+                                if ((bwork == 0) || (EscPosDecoder.s_StringESCRICS.ContainsKey(bwork)))
                                 {
                                     initialICS = bwork;
                                 }

@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020 Kunio Fukuchi
+   Copyright (C) 2020-2022 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -33,29 +33,29 @@ namespace kunif.EscPosUtils
         /// <summary>
         /// US(0x1F) XX started fixed size linedisplay command type and related length information
         /// </summary>
-        private static readonly Dictionary<byte, SeqInfo> s_VfdUSType = new Dictionary<byte, SeqInfo>()
+        private static readonly Dictionary<byte, SeqInfo> s_VfdUSType = new()
         {
-            { 0x01, new SeqInfo { seqtype = EscPosCmdType.VfdUsOverwriteMode,               length = 2 } },
-            { 0x02, new SeqInfo { seqtype = EscPosCmdType.VfdUsVerticalScrollMode,          length = 2 } },
-            { 0x03, new SeqInfo { seqtype = EscPosCmdType.VfdUsHorizontalScrollMode,        length = 2 } },
-            { 0x0A, new SeqInfo { seqtype = EscPosCmdType.VfdUsMoveCursorUp,                length = 2 } },
-            { 0x0D, new SeqInfo { seqtype = EscPosCmdType.VfdUsMoveCursorRightMost,         length = 2 } },
-            { 0x23, new SeqInfo { seqtype = EscPosCmdType.VfdUsTurnAnnounciatorOnOff,       length = 4 } },
+            { 0x01, new SeqInfo { seqtype = EscPosCmdType.VfdUsOverwriteMode, length = 2 } },
+            { 0x02, new SeqInfo { seqtype = EscPosCmdType.VfdUsVerticalScrollMode, length = 2 } },
+            { 0x03, new SeqInfo { seqtype = EscPosCmdType.VfdUsHorizontalScrollMode, length = 2 } },
+            { 0x0A, new SeqInfo { seqtype = EscPosCmdType.VfdUsMoveCursorUp, length = 2 } },
+            { 0x0D, new SeqInfo { seqtype = EscPosCmdType.VfdUsMoveCursorRightMost, length = 2 } },
+            { 0x23, new SeqInfo { seqtype = EscPosCmdType.VfdUsTurnAnnounciatorOnOff, length = 4 } },
             { 0x24, new SeqInfo { seqtype = EscPosCmdType.VfdUsMoveCursorSpecifiedPosition, length = 4 } },
-            { 0x2C, new SeqInfo { seqtype = EscPosCmdType.VfdUsDisplayCharWithComma,        length = 3 } },
-            { 0x2E, new SeqInfo { seqtype = EscPosCmdType.VfdUsDisplayCharWithPeriod,       length = 3 } },
-            { 0x3A, new SeqInfo { seqtype = EscPosCmdType.VfdUsStartEndMacroDefinition,     length = 2 } },
-            { 0x3B, new SeqInfo { seqtype = EscPosCmdType.VfdUsDisplayCharWithSemicolon,    length = 3 } },
-            { 0x40, new SeqInfo { seqtype = EscPosCmdType.VfdUsExecuteSelfTest,             length = 2 } },
-            { 0x42, new SeqInfo { seqtype = EscPosCmdType.VfdUsMoveCursorBottom,            length = 2 } },
-            { 0x43, new SeqInfo { seqtype = EscPosCmdType.VfdUsTurnCursorDisplayModeOnOff,  length = 3 } },
-            { 0x45, new SeqInfo { seqtype = EscPosCmdType.VfdUsSetDisplayBlinkInterval,     length = 3 } },
-            { 0x54, new SeqInfo { seqtype = EscPosCmdType.VfdUsSetAndDisplayCountTime,      length = 4 } },
-            { 0x55, new SeqInfo { seqtype = EscPosCmdType.VfdUsDisplayCounterTime,          length = 2 } },
-            { 0x58, new SeqInfo { seqtype = EscPosCmdType.VfdUsBrightnessAdjustment,        length = 3 } },
-            { 0x5E, new SeqInfo { seqtype = EscPosCmdType.VfdUsExecuteMacro,                length = 4 } },
-            { 0x72, new SeqInfo { seqtype = EscPosCmdType.VfdUsTurnReverseMode,             length = 3 } },
-            { 0x76, new SeqInfo { seqtype = EscPosCmdType.VfdUsStatusConfirmationByDTRSignal,length = 3 } }
+            { 0x2C, new SeqInfo { seqtype = EscPosCmdType.VfdUsDisplayCharWithComma, length = 3 } },
+            { 0x2E, new SeqInfo { seqtype = EscPosCmdType.VfdUsDisplayCharWithPeriod, length = 3 } },
+            { 0x3A, new SeqInfo { seqtype = EscPosCmdType.VfdUsStartEndMacroDefinition, length = 2 } },
+            { 0x3B, new SeqInfo { seqtype = EscPosCmdType.VfdUsDisplayCharWithSemicolon, length = 3 } },
+            { 0x40, new SeqInfo { seqtype = EscPosCmdType.VfdUsExecuteSelfTest, length = 2 } },
+            { 0x42, new SeqInfo { seqtype = EscPosCmdType.VfdUsMoveCursorBottom, length = 2 } },
+            { 0x43, new SeqInfo { seqtype = EscPosCmdType.VfdUsTurnCursorDisplayModeOnOff, length = 3 } },
+            { 0x45, new SeqInfo { seqtype = EscPosCmdType.VfdUsSetDisplayBlinkInterval, length = 3 } },
+            { 0x54, new SeqInfo { seqtype = EscPosCmdType.VfdUsSetAndDisplayCountTime, length = 4 } },
+            { 0x55, new SeqInfo { seqtype = EscPosCmdType.VfdUsDisplayCounterTime, length = 2 } },
+            { 0x58, new SeqInfo { seqtype = EscPosCmdType.VfdUsBrightnessAdjustment, length = 3 } },
+            { 0x5E, new SeqInfo { seqtype = EscPosCmdType.VfdUsExecuteMacro, length = 4 } },
+            { 0x72, new SeqInfo { seqtype = EscPosCmdType.VfdUsTurnReverseMode, length = 3 } },
+            { 0x76, new SeqInfo { seqtype = EscPosCmdType.VfdUsStatusConfirmationByDTRSignal, length = 3 } }
         };
 
         /// <summary>

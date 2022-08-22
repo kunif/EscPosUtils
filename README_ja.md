@@ -4,11 +4,13 @@
 
 開発途中のため、API・機能・構成などは大きく変わる可能性があります。
 
-現在は以下3つのプロジェクトがあります。
+現在は以下4つのプロジェクトがあります。
 
-- EscPosUtils : ESC/POSコマンドのTokenize,Decode(その他追加予定)のためのライブラリ
+- EscPosUtils : ESC/POSコマンドのTokenize,Decode,Encode(その他追加予定)のためのライブラリ
 
 - EscPosDecode : ESC/POSコマンドのバイナリデータファイルを解析するコマンドラインツール
+
+- EscPosEncode : ESC/POSコマンドのバイナリデータファイルを作成するサンプルプログラム
 
 - TestEscPosUtils : EscPosUtilsライブラリのテストプログラム
 
@@ -17,15 +19,18 @@
 
 このプログラムの開発および実行には以下が必要です。
 
-- Visual Studio 2019またはVisual Studio Community 2019 version 16.7.5
+- Visual Studio 2022またはVisual Studio Community 2022 version 17.3.1
+- .NET 6.0-Windows
 - .NET Standard 2.1
-- .NET Core 3.1
-- System.Drawing.Common 4.7.0
+- .NET Core App 3.1
+- KGySoft.Drawing 6.3.2
+- System.Drawing.Common 6.0.0
 - System.Drawing.Primitives 4.3.0
-- Microsoft.NET.Test.sdk 16.7.1
-- MSTest.TestAdapter 2.1.2
-- MSTest.TestFramework 2.1.2
-- coverlet.collector 1.3.0
+- System.Text.Encoding.CodePages 6.0.0
+- Microsoft.NET.Test.sdk 17.3.0
+- MSTest.TestAdapter 2.2.10
+- MSTest.TestFramework 2.2.10
+- coverlet.collector 3.1.2
 
 
 ## EscPosUtilsの機能とAPI
@@ -34,11 +39,11 @@ namespase & using : kunif.EscPosUtils
 
 Enum : EscPosCmdType
 
-class : EscPosCmd, EscPosTokenizer, EscPosDecoder
+class : EscPosCmd, EscPosTokenizer, EscPosDecoder, EscPosEncoder
 
 EscPosCmdType : ESC/POSの各コマンドをEnumとして定義したもの
 
-EscPosCmd : ESC/POSコマンドデータの解析結果を保持するクラス
+EscPosCmd : ESC/POSコマンドデータおよび解析結果を保持するクラス
 - cmdtype : ESC/POSコマンド種別のEnum値
 - cmddata : コマンドのバイト配列データ
 - cmdlength : コマンドのバイト単位長さ
@@ -76,6 +81,8 @@ EscPosDecoder : EscPosTokenizer.Scanで切り分けたコマンドの詳細を�
 - s_cp???? : 印刷・表示可能データの可視化処理の変換用辞書
 
 - GetEmbeddedESCtCodePage, PrtESCtCodePage, VfdESCtCodePage : 上記処理の補助用メソッドと辞書
+
+EscPosEncoder : ESC/POSコマンドデータを作成してEscPosCmdのListとして保持するクラス
 
 
 ## EscPosDecodeの使い方
@@ -178,7 +185,7 @@ ESC/POSコマンドを記録したバイナリファイルをパラメータに�
 - タイ語文字の変換処理用辞書は、枠組みを作成しただけで実際の文字コードを反映していません。  
 - Web上で入手出来る仕様情報に曖昧・不足・間違い等があるため、一部の処理が間違っている可能性があります。
 - API・機能・構成などは大きく変わる可能性があります。
-- 例えばESC/POSコマンドを組み立てる機能やプリンタ・ラインディスプレイデバイスのシミュレーション機能など。  
+- 例えばプリンタ・ラインディスプレイデバイスのシミュレーション機能など。  
 - あるいは既存の機能でも組み込む対象やパラメータを変える可能性があります。
 
 ## 検証とカスタマイズ
