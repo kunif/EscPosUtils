@@ -178,8 +178,8 @@ ESC/POSコマンドを記録したバイナリファイルをパラメータに�
 
 ## EscPosEncodeの使い方
 
-EscPosEncoderクラスを使ってプログラムするC#ソースコードをスクリプトとして実行し、ESC/POSエンコードしたバイナリファイルを作成します。
-EscPosDecodeツールから -T,-G オプションを削減し、-W,-P オプションを追加しています。
+EscPosEncoderクラスを使ってプログラムするC#ソースコードをスクリプトとして実行し、ESC/POSエンコードしたバイナリファイルを作成します。  
+EscPosDecodeツールから -T,-G オプションを削減し、-W,-P オプションを追加しています。  
 
 メインヘルプ
 
@@ -198,9 +198,9 @@ EscPosDecodeツールから -T,-G オプションを削減し、-W,-P オプシ�
       -M FontPattern :  specify CJK MBCS supported font size pattern 1 to 5. default is 1.
       -V FontPattern :  specify LineDisplay supported font size pattern 1 or 2. default is 1.
 
-以下2つはEscPosDecodeのヘルプと同じ
-フォントサイズパターンヘルプ
-コードページと国際文字セットヘルプ
+以下2つはEscPosDecodeのヘルプと同じ  
+フォントサイズパターンヘルプ  
+コードページと国際文字セットヘルプ  
 
 
 ## TestEscPosUtilsについて   
