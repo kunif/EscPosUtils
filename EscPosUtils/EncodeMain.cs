@@ -64,6 +64,8 @@ namespace kunif.EscPosUtils
 
         public void Configuration(long initialDevice = EscPosPrinter, int SbcsFontPattern = 1, int KanjiFontPattern = 1, int LineDisplayFontPattern = 1, int paperWidth = 384, int pageHeight = 1662, int codepage = 437, InternationalCharacter internationalchar = InternationalCharacter.USA)
         {
+            InternalInit();
+
             _targetDevice = initialDevice;
 
             SbcsFontList = SbcsFontPattern switch
@@ -131,7 +133,7 @@ namespace kunif.EscPosUtils
 
         //--------------------------------------
 
-        public void Initialize()
+        internal void InternalInit()
         {
             _BatchPrint = BatchMode.NormalDisable;
             _PageMode = false;
@@ -225,6 +227,11 @@ namespace kunif.EscPosUtils
             _DataMatrixData = Array.Empty<byte>();
 
             _UserSettingMode = false;
+        }
+
+        public void Initialize()
+        {
+            InternalInit();
 
             byte[] cmd = { 0x1B, 0x40 };
             CommandList.Add(new EscPosCmd(EscPosCmdType.EscInitialize, cmd));

@@ -8,8 +8,12 @@
     <NullableContextOptions>enable</NullableContextOptions>
     <Nullable>enable</Nullable>
     <Copyright>Copyright (C) 2020-2022 Kunio Fukuchi all rights reserved.</Copyright>
-    <Version>0.2.0.0</Version>
+    <Version>0.3.0.0</Version>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,8 +28,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="KGySoft.CoreLibraries" Version="6.0.2" />
+    <PackageReference Include="KGySoft.Drawing" Version="6.3.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.3.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

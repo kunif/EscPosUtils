@@ -10,21 +10,27 @@ Currently, it have the following four projects.
 
 - EscPosDecode: A command line tool that parses binary data files for ESC/POS commands.
 
+- EscPosEncode: A command line tool that creates binary data files for ESC/POS commands.
+
 - TestEscPosUtils: EscPosUtils library test program.
 
 ## Development/Execuion environment
 
 To develop and execute this program you need:
 
-- Visual Studio 2022 or Visual Studio Community 2022  version 17.3.1
+- Visual Studio 2022 or Visual Studio Community 2022  version 17.3.4
 - .NET 6.0-Windows
 - .NET Standard 2.1
 - .NET Core App 3.1
+- KGySoft.CoreLibraries 6.0.2
 - KGySoft.Drawing.Common 6.3.2
 - System.Drawing.Common 6.0.0
 - System.Drawing.Primitives 4.3.0
+- System.Reflection 4.3.0
 - System.Text.Encoding.CodePages 6.0.0
-- Microsoft.NET.Test.sdk 17.3.0
+- Microsoft.CodeAnalysis.CSharp.Scripting 4.3.0
+- Microsoft.CSharp 4.7.0
+- Microsoft.NET.Test.sdk 17.3.1
 - MSTest.TestAdapter 2.2.10
 - MSTest.TestFramework 2.2.10
 - coverlet.collector 3.1.2
@@ -167,6 +173,33 @@ Code page and international character set help
      India
       66: Devanagari  67: Bengali     68: Tamil       69: Telugu      70: Assamese    71: Oriya
       72: Kannada     73: Malayalam   74: Gujarati    75: Punjabi     82: Marathi
+
+
+## How to use EscPosEncode
+
+Execute the C# source code programmed using the EscPosEncoder class as a script to create an ESC/POS encoded binary file.
+Removed -T,-G options from EscPosDecode tool and added -W,-P options.
+
+Main help
+
+    Usage: EscPosEncode  InputFilePath  [Options]
+      InputFilePath :  specify input ESC/POS encoding script file path. required.
+      -H :  display this usage message.
+      -F :  display supported font size pattern detail message.
+      -L :  display supported CodePage and International character set type list message.
+      -D {Printer | LineDisplay} :  specify initial device type. default is Printer.
+      -O OutputFilePath :  specify output encoded binary file path. default is STDOUT.
+      -C CodePage :  specify initial CodePage number. default system setting of Language for non-Unicode programs.
+      -I International character set type :  specify initial International character set type. default 0
+      -W PaperWidth :  specify paper width by dot. default is 384.
+      -P PageHeight :  specify page mode maximum height by dot. default is 1662.
+      -S FontPattern :  specify SBCS supported font size pattern 1 to 9. default is 1.
+      -M FontPattern :  specify CJK MBCS supported font size pattern 1 to 5. default is 1.
+      -V FontPattern :  specify LineDisplay supported font size pattern 1 or 2. default is 1.
+
+The following two are the same as EscPosDecode help.
+Font size pattern help
+Code page and international character set help
 
 
 ## About TestEscPosUtils

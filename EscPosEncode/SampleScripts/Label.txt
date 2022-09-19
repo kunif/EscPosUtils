@@ -1,0 +1,119 @@
+enc.UserSettingMode = true;
+enc.SetCustomizeSettingValues(newvalues: new List<EscPosEncoder.CustomizeValue>() { new EscPosEncoder.CustomizeValue() { number = 117, value = 60 } });
+enc.SetPaperLayout(EscPosEncoder.LayoutBasePoint.TopOfBlackmark, "305", "50", "70", "25", "215", "50", "495");
+enc.UserSettingMode = false;
+
+enc.Justification = EscPosEncoder.Alignment.Center;
+enc.SBCSFontType = EscPosEncoder.FontType.A;
+enc.Emphasis = true;
+enc.CharScale = new EscPosEncoder.Scale() { height = 1, width = 2 };
+enc.Printables("ESC/POS");
+enc.CharScale = new EscPosEncoder.Scale() { height = 1, width = 1 };
+enc.Printables(" Rental Video\x0a");
+enc.Emphasis = false;
+
+enc.D1BarcodeText = EscPosEncoder.HumanReadableIndicator.Below;
+enc.D1BarcodeTextFontType = EscPosEncoder.FontType.B;
+enc.D1BarcodeHeight = 35;
+enc.D1BarcodeData = new EscPosEncoder.BarcodeData() { barcodeType = EscPosEncoder.BarcodeType.CODE39, data = Encoding.ASCII.GetBytes("*00061*") };
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 40);
+
+enc.SBCSUnderline = EscPosEncoder.Underline.On1dot;
+enc.Printables("NAME ");
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 70);
+enc.SBCSUnderline = EscPosEncoder.Underline.Off;
+
+enc.Justification = EscPosEncoder.Alignment.Right;
+enc.SBCSFontType = EscPosEncoder.FontType.B;
+enc.Printables("NOV. 1, 2012\x0a");
+enc.FeedPaper(EscPosEncoder.TargetPosition.LabelPeeling, EscPosEncoder.MovingRule.ForceNext);
+
+enc.FeedPaper(EscPosEncoder.TargetPosition.PrintStarting, EscPosEncoder.MovingRule.CurrentTop);
+
+enc.Justification = EscPosEncoder.Alignment.Center;
+enc.SBCSFontType = EscPosEncoder.FontType.A;
+enc.Emphasis = true;
+enc.CharScale = new EscPosEncoder.Scale() { height = 1, width = 2 };
+enc.Printables("ESC/POS");
+enc.CharScale = new EscPosEncoder.Scale() { height = 1, width = 1 };
+enc.Printables(" Rental Video\x0a");
+enc.Emphasis = false;
+
+enc.D1BarcodeText = EscPosEncoder.HumanReadableIndicator.Below;
+enc.D1BarcodeTextFontType = EscPosEncoder.FontType.B;
+enc.D1BarcodeHeight = 35;
+enc.D1BarcodeData = new EscPosEncoder.BarcodeData() { barcodeType = EscPosEncoder.BarcodeType.CODE39, data = Encoding.ASCII.GetBytes("*00062*") };
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 40);
+
+enc.SBCSUnderline = EscPosEncoder.Underline.On1dot;
+enc.Printables("NAME ");
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 70);
+enc.SBCSUnderline = EscPosEncoder.Underline.Off;
+
+enc.Justification = EscPosEncoder.Alignment.Right;
+enc.SBCSFontType = EscPosEncoder.FontType.B;
+enc.Printables("NOV. 1, 2012\x0a");
+enc.FeedPaper(EscPosEncoder.TargetPosition.LabelPeeling, EscPosEncoder.MovingRule.ForceNext);
+
+enc.FeedPaper(EscPosEncoder.TargetPosition.PrintStarting, EscPosEncoder.MovingRule.CurrentTop);
+
+//==================
+
+enc.UserSettingMode = true;
+enc.SetCustomizeSettingValues(newvalues: new List<EscPosEncoder.CustomizeValue>() { new EscPosEncoder.CustomizeValue() { number = 117, value = 60 } });
+enc.SetPaperLayout(EscPosEncoder.LayoutBasePoint.TopOfBlackmark, "305", "50", "70", "25", "215", "50", "495");
+enc.UserSettingMode = false;
+
+enc.Justification = EscPosEncoder.Alignment.Center;
+enc.SBCSFontType = EscPosEncoder.FontType.A;
+enc.Emphasis = true;
+enc.CharScale = new EscPosEncoder.Scale() { height = 1, width = 2 };
+enc.Printables("ESC/POS");
+enc.CharScale = new EscPosEncoder.Scale() { height = 1, width = 1 };
+enc.Printables(" Rental Video\x0a");
+enc.Emphasis = false;
+
+enc.D1BarcodeText = EscPosEncoder.HumanReadableIndicator.Below;
+enc.D1BarcodeTextFontType = EscPosEncoder.FontType.B;
+enc.D1BarcodeHeight = 35;
+enc.D1BarcodeData = new EscPosEncoder.BarcodeData() { barcodeType = EscPosEncoder.BarcodeType.CODE39, data = Encoding.ASCII.GetBytes("*00061*") };
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 40);
+
+enc.SBCSUnderline = EscPosEncoder.Underline.On1dot;
+enc.Printables("NAME ");
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 70);
+enc.SBCSUnderline = EscPosEncoder.Underline.Off;
+
+enc.Justification = EscPosEncoder.Alignment.Right;
+enc.SBCSFontType = EscPosEncoder.FontType.B;
+enc.Printables("NOV. 1, 2012\x0a");
+enc.FeedPaper(EscPosEncoder.TargetPosition.LabelPeeling, EscPosEncoder.MovingRule.ForceNext);
+
+enc.FeedPaper(EscPosEncoder.TargetPosition.PrintStarting, EscPosEncoder.MovingRule.CurrentTop);
+
+enc.Justification = EscPosEncoder.Alignment.Center;
+enc.SBCSFontType = EscPosEncoder.FontType.A;
+enc.Emphasis = true;
+enc.CharScale = new EscPosEncoder.Scale() { height = 1, width = 2 };
+enc.Printables("ESC/POS");
+enc.CharScale = new EscPosEncoder.Scale() { height = 1, width = 1 };
+enc.Printables(" Rental Video\x0a");
+enc.Emphasis = false;
+
+enc.D1BarcodeText = EscPosEncoder.HumanReadableIndicator.Below;
+enc.D1BarcodeTextFontType = EscPosEncoder.FontType.B;
+enc.D1BarcodeHeight = 35;
+enc.D1BarcodeData = new EscPosEncoder.BarcodeData() { barcodeType = EscPosEncoder.BarcodeType.CODE39, data = Encoding.ASCII.GetBytes("*00062*") };
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 40);
+
+enc.SBCSUnderline = EscPosEncoder.Underline.On1dot;
+enc.Printables("NAME ");
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 70);
+enc.SBCSUnderline = EscPosEncoder.Underline.Off;
+
+enc.Justification = EscPosEncoder.Alignment.Right;
+enc.SBCSFontType = EscPosEncoder.FontType.B;
+enc.Printables("NOV. 1, 2012\x0a");
+enc.FeedPaper(EscPosEncoder.TargetPosition.LabelPeeling, EscPosEncoder.MovingRule.ForceNext);
+
+enc.FeedPaper(EscPosEncoder.TargetPosition.PrintStarting, EscPosEncoder.MovingRule.CurrentTop);

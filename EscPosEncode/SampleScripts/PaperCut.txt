@@ -1,0 +1,45 @@
+enc.Initialize();
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 16);
+enc.Printables("NOV-1-2012 13:00\x0a");
+enc.Printables("Table No.6\x0a");
+enc.Printables("TM-Uxxx ..... No.1\x0a");
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 20);
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 16);
+enc.Printables("NOV-1-2012 13:00\x0a");
+enc.Printables("Table No.6\x0a");
+enc.Printables("TM-Uxxx ..... No.2\x0a");
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 20);
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 16);
+enc.Printables("NOV-1-2012 13:00\x0a");
+enc.Printables("Table No.6\x0a");
+enc.Printables("TM-Uxxx ..... No.3\x0a");
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 20);
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 16);
+
+//==================
+
+enc.Initialize();
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 16);
+enc.Printables("NOV-1-2012 13:00\x0a");
+enc.Printables("Table No.6\x0a");
+enc.Printables("TM-Uxxx ..... No.1\x0a");
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 20);
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 16);
+enc.Printables("NOV-1-2012 13:00\x0a");
+enc.Printables("Table No.6\x0a");
+enc.Printables("TM-Uxxx ..... No.2\x0a");
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 20);
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 16);
+enc.Printables("NOV-1-2012 13:00\x0a");
+enc.Printables("Table No.6\x0a");
+enc.Printables("TM-Uxxx ..... No.3\x0a");
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 20);
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 16);

@@ -1,0 +1,71 @@
+enc.Initialize();
+enc.LineSpacing = 18;
+enc.Justification = EscPosEncoder.Alignment.Center;
+enc.CharScale = new EscPosEncoder.Scale() { width = 2, height = 2 };
+enc.Printables("╔═══════════╗\x0a");
+enc.Printables("║  ESC/POS  ║\x0a");
+enc.Printables("║   ");
+enc.CharScale = new EscPosEncoder.Scale() { width = 1, height = 1 };
+enc.Printables("Thank you ");
+enc.CharScale = new EscPosEncoder.Scale() { width = 2, height = 2 };
+enc.Printables("   ║\x0a");
+enc.Printables("╚═══════════╝\x0a");
+
+enc.DefaultLineSpacing = 30;
+enc.CharScale = new EscPosEncoder.Scale() { width = 1, height = 1 };
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 4);
+enc.Printables("NOVEMBER 1, 2012 10:30");
+enc.PrintAndFeed(EscPosEncoder.FeedType.Lines, 3);
+
+enc.Justification = EscPosEncoder.Alignment.Left;
+enc.Printables("TM-Uxxx 6.75\x0a");
+enc.Printables("TM-Hxxx 6.00\x0a");
+enc.Printables("PS-xxx 1.70\x0a\x0a");
+
+enc.CharScale = new EscPosEncoder.Scale() { width = 1, height = 2 };
+enc.Printables("TOTAL 14.45\x0a");
+enc.CharScale = new EscPosEncoder.Scale() { width = 1, height = 1 };
+enc.Printables("---------------------------------------\x0a");
+enc.Printables("PAID 50.00\x0a");
+enc.Printables("CHANGE 35.55\x0a");
+
+enc.GeneratePule(EscPosEncoder.DrawerKick.Pin2, 2, 20);
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 0);
+
+//==================
+
+enc.Initialize();
+enc.LineSpacing = 18;
+enc.Justification = EscPosEncoder.Alignment.Center;
+enc.CharScale = new EscPosEncoder.Scale() { width = 2, height = 2 };
+enc.Printables("╔═══════════╗\x0a");
+enc.Printables("║  ESC/POS  ║\x0a");
+enc.Printables("║   ");
+enc.CharScale = new EscPosEncoder.Scale() { width = 1, height = 1 };
+enc.Printables("Thank you ");
+enc.CharScale = new EscPosEncoder.Scale() { width = 2, height = 2 };
+enc.Printables("   ║\x0a");
+enc.Printables("╚═══════════╝\x0a");
+
+enc.DefaultLineSpacing = 30;
+enc.CharScale = new EscPosEncoder.Scale() { width = 1, height = 1 };
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 4);
+enc.Printables("NOVEMBER 1, 2012 10:30");
+enc.PrintAndFeed(EscPosEncoder.FeedType.Lines, 3);
+
+enc.Justification = EscPosEncoder.Alignment.Left;
+enc.Printables("TM-Uxxx 6.75\x0a");
+enc.Printables("TM-Hxxx 6.00\x0a");
+enc.Printables("PS-xxx 1.70\x0a\x0a");
+
+enc.CharScale = new EscPosEncoder.Scale() { width = 1, height = 2 };
+enc.Printables("TOTAL 14.45\x0a");
+enc.CharScale = new EscPosEncoder.Scale() { width = 1, height = 1 };
+enc.Printables("---------------------------------------\x0a");
+enc.Printables("PAID 50.00\x0a");
+enc.Printables("CHANGE 35.55\x0a");
+
+enc.GeneratePule(EscPosEncoder.DrawerKick.Pin2, 2, 20);
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 0);

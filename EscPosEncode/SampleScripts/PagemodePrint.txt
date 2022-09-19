@@ -1,0 +1,269 @@
+public static readonly EscPosEncoder.EscPosBitmap borderpiece = new()
+{
+    imageFormat = EscPosEncoder.ImageFormat.Column08dot,
+    width = 25,
+    height = 8,
+    monochrome = true,
+    planeCount = 1,
+    totalSize = 26,
+    planes = new EscPosEncoder.Plane[] {
+        new EscPosEncoder.Plane {
+            color = (byte)'1',
+            data = new byte[] {
+                0x80,0x80,0x80,0x60,0x80,0x80,0x80,0x8C,0xA5,0x51,0x4E,0x20,0x1A,0x20,0x4E,0x51,0xA5,0x8C,0x80,0x80,0x80,0x60,0x80,0x80,0x80
+            }
+        }
+    }
+};
+
+public static readonly EscPosEncoder.EscPosBitmap xmastree1 = new()
+{
+    imageFormat = EscPosEncoder.ImageFormat.Column08dot,
+    width = 34,
+    height = 8,
+    monochrome = true,
+    planeCount = 1,
+    totalSize = 35,
+    planes = new EscPosEncoder.Plane[] {
+        new EscPosEncoder.Plane {
+            color = (byte)'1',
+            data = new byte[] {
+                0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x03,0x05,0x29,0x28,0x38,0x30,0x20,0xE0,0x20,0x31,0x38,0x28,0x29,0x05,0x03,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+            }
+        }
+    }
+};
+
+public static readonly EscPosEncoder.EscPosBitmap xmastree2 = new()
+{
+    imageFormat = EscPosEncoder.ImageFormat.Column08dot,
+    width = 34,
+    height = 8,
+    monochrome = true,
+    planeCount = 1,
+    totalSize = 35,
+    planes = new EscPosEncoder.Plane[] {
+        new EscPosEncoder.Plane {
+            color = (byte)'1',
+            data = new byte[] {
+                0x00,0x00,0x00,0x00,0x00,0x08,0x18,0x19,0x2A,0x4C,0x8C,0x80,0x02,0x47,0xE2,0x40,0x00,0x80,0xC4,0x8E,0x04,0x80,0x8C,0x4C,0x2A,0x19,0x18,0x08,0x00,0x00,0x00,0x00,0x00,0x00
+            }
+        }
+    }
+};
+
+public static readonly EscPosEncoder.EscPosBitmap xmastree3 = new()
+{
+    imageFormat = EscPosEncoder.ImageFormat.Column08dot,
+    width = 34,
+    height = 8,
+    monochrome = true,
+    planeCount = 1,
+    totalSize = 35,
+    planes = new EscPosEncoder.Plane[] {
+        new EscPosEncoder.Plane {
+            color = (byte)'1',
+            data = new byte[] {
+                0x00,0x00,0x00,0x40,0x40,0xC0,0xC0,0x40,0x5C,0x54,0x57,0x55,0x55,0x75,0x75,0x55,0x55,0x55,0x75,0x75,0x55,0x55,0x57,0x54,0x5C,0x40,0xC0,0xC0,0x40,0x40,0x40,0x00,0x00,0x00
+            }
+        }
+    }
+};
+
+public static readonly EscPosEncoder.EscPosBitmap xmascake1 = new()
+{
+    imageFormat = EscPosEncoder.ImageFormat.Column08dot,
+    width = 48,
+    height = 8,
+    monochrome = true,
+    planeCount = 1,
+    totalSize = 49,
+    planes = new EscPosEncoder.Plane[] {
+        new EscPosEncoder.Plane {
+            color = (byte)'1',
+            data = new byte[] {
+                0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x07,0x07,0x09,0x09,0x7D,0x7C,0x10,0x10,0x16,0x16,0x10,0x70,0xF8,0xFC,0x7E,0x3E,0x3E,0x7E,0xFE,0xFC,0x70,0x10,0x16,0x16,0x10,0x10,0x7C,0x7D,0x09,0x09,0x07,0x07,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+            }
+        }
+    }
+};
+
+public static readonly EscPosEncoder.EscPosBitmap xmascake2 = new()
+{
+    imageFormat = EscPosEncoder.ImageFormat.Column08dot,
+    width = 48,
+    height = 8,
+    monochrome = true,
+    planeCount = 1,
+    totalSize = 49,
+    planes = new EscPosEncoder.Plane[] {
+        new EscPosEncoder.Plane {
+            color = (byte)'1',
+            data = new byte[] {
+                0x1F,0x1F,0x24,0x21,0x40,0x42,0x42,0x41,0xF1,0xF1,0x29,0x59,0x59,0x8C,0x8C,0xD4,0xD4,0xA4,0xA4,0xD4,0xD4,0x8C,0x8C,0xD4,0xD4,0xAC,0xAC,0xC4,0xC4,0xAC,0xAC,0x94,0x94,0xAC,0xAC,0x49,0x49,0x29,0xF1,0xF1,0x41,0x42,0x42,0x40,0x23,0x24,0x1F,0x1F
+            }
+        }
+    }
+};
+
+public static readonly EscPosEncoder.EscPosBitmap xmascake3 = new()
+{
+    imageFormat = EscPosEncoder.ImageFormat.Column08dot,
+    width = 48,
+    height = 8,
+    monochrome = true,
+    planeCount = 1,
+    totalSize = 49,
+    planes = new EscPosEncoder.Plane[] {
+        new EscPosEncoder.Plane {
+            color = (byte)'1',
+            data = new byte[] {
+                0xF0,0xF0,0x4C,0x4C,0x24,0x24,0x24,0x12,0x12,0x12,0x12,0x12,0x12,0x89,0xA9,0xA9,0x89,0x89,0x99,0x99,0x89,0x80,0x89,0xC9,0xC9,0x89,0x99,0x99,0x89,0xC9,0xC9,0x89,0xA9,0xA9,0x89,0x12,0x12,0x12,0x12,0x12,0x12,0x24,0x24,0x24,0x4C,0x4C,0xF0,0xF0
+            }
+        }
+    }
+};
+
+enc.Initialize();
+enc.PageMode = true;
+enc.BasicPitch = new EscPosEncoder.MotionUnits() { horizontal = 203, vertical = 203 };
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 6, Y = 0, Width = 500, Height = 750 };
+
+enc.PageDirection = EscPosEncoder.Direction.LeftToRight;
+for (int i = 0; i < 10; i++)
+{
+    enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, borderpiece, false);
+}
+
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+for (int i = 0; i < 15; i++)
+{
+    enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, borderpiece, false);
+}
+
+enc.PageDirection = EscPosEncoder.Direction.RightToLeft;
+for (int i = 0; i < 10; i++)
+{
+    enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, borderpiece, false);
+}
+
+enc.PageDirection = EscPosEncoder.Direction.TopToBottom;
+for (int i = 0; i < 15; i++)
+{
+    enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, borderpiece, false);
+}
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 140, Y = 118, Width = 360, Height = 528 };
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+
+enc.CharScale = new EscPosEncoder.Scale() { width = 2, height = 2 };
+enc.Printables("\x0a Merry Christmas !!\x0a\x0a");
+
+enc.CharScale = new EscPosEncoder.Scale() { width = 2, height = 1 };
+enc.Printables(" 10% OFF COUPON");
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 200);
+enc.Printables("ESC/POS DEPARTMENT STORE");
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 50, Y = 588, Width = 72, Height = 68 };
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+enc.LineSpacing = 24;
+
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmastree1, false);
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmastree2, false);
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmastree3, false);
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 314, Y = 102, Width = 72, Height = 96 };
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmascake1, false);
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmascake2, false);
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmascake3, false);
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 276, Y = 226, Width = 70, Height = 312 };
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+
+enc.D1BarcodeText = EscPosEncoder.HumanReadableIndicator.Below;
+enc.D1BarcodeTextFontType = EscPosEncoder.FontType.B;
+enc.D1BarcodeHeight = 40;
+enc.D1BarcodeModuleWidth = 2;
+enc.MovePrintPosition(EscPosEncoder.AxisType.Vertical, EscPosEncoder.ValueSpecifyType.Absolute, 40);
+enc.D1BarcodeData = new EscPosEncoder.BarcodeData() { barcodeType = EscPosEncoder.BarcodeType.CODE39, data = Encoding.ASCII.GetBytes("*10% OFF*") };
+
+enc.PageModeData(EscPosEncoder.PageAction.PrintAndContinue);
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 80);
+enc.PageMode = false;
+
+//==================
+
+enc.Initialize();
+enc.PageMode = true;
+enc.BasicPitch = new EscPosEncoder.MotionUnits() { horizontal = 203, vertical = 203 };
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 6, Y = 0, Width = 500, Height = 750 };
+
+enc.PageDirection = EscPosEncoder.Direction.LeftToRight;
+for (int i = 0; i < 10; i++)
+{
+    enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, borderpiece, false);
+}
+
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+for (int i = 0; i < 15; i++)
+{
+    enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, borderpiece, false);
+}
+
+enc.PageDirection = EscPosEncoder.Direction.RightToLeft;
+for (int i = 0; i < 10; i++)
+{
+    enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, borderpiece, false);
+}
+
+enc.PageDirection = EscPosEncoder.Direction.TopToBottom;
+for (int i = 0; i < 15; i++)
+{
+    enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, borderpiece, false);
+}
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 140, Y = 118, Width = 360, Height = 528 };
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+
+enc.CharScale = new EscPosEncoder.Scale() { width = 2, height = 2 };
+enc.Printables("\x0a Merry Christmas !!\x0a\x0a");
+
+enc.CharScale = new EscPosEncoder.Scale() { width = 2, height = 1 };
+enc.Printables(" 10% OFF COUPON");
+
+enc.PrintAndFeed(EscPosEncoder.FeedType.Dots, 200);
+enc.Printables("ESC/POS DEPARTMENT STORE");
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 50, Y = 588, Width = 72, Height = 68 };
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+enc.LineSpacing = 24;
+
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmastree1, false);
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmastree2, false);
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmastree3, false);
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 314, Y = 102, Width = 72, Height = 96 };
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmascake1, false);
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmascake2, false);
+enc.DefineGraphics(EscPosEncoder.BufferType.Immediate, xmascake3, false);
+
+enc.PageModeArea = new System.Drawing.Rectangle { X = 276, Y = 226, Width = 70, Height = 312 };
+enc.PageDirection = EscPosEncoder.Direction.BottomToTop;
+
+enc.D1BarcodeText = EscPosEncoder.HumanReadableIndicator.Below;
+enc.D1BarcodeTextFontType = EscPosEncoder.FontType.B;
+enc.D1BarcodeHeight = 40;
+enc.D1BarcodeModuleWidth = 2;
+enc.MovePrintPosition(EscPosEncoder.AxisType.Vertical, EscPosEncoder.ValueSpecifyType.Absolute, 40);
+enc.D1BarcodeData = new EscPosEncoder.BarcodeData() { barcodeType = EscPosEncoder.BarcodeType.CODE39, data = Encoding.ASCII.GetBytes("*10% OFF*") };
+
+enc.PageModeData(EscPosEncoder.PageAction.PrintAndContinue);
+enc.CutPaper(EscPosEncoder.CutType.FeedAndPartialCut, 80);
+enc.PageMode = false;
