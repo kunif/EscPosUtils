@@ -2012,9 +2012,9 @@ namespace kunif.EscPosUtils
         {
             return record.cmddata[index] switch
             {
-                48 => "Model 1",
-                49 => "Model 2",
-                50 => "Micro QR Code",
+                49 => "Model 1",
+                50 => "Model 2",
+                51 => "Micro QR Code",
                 _ => "Undefined",
             };
         }

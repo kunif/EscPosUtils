@@ -92,6 +92,9 @@ namespace kunif.EscPosEncode
 
             try
             {
+                string cwd = Directory.GetCurrentDirectory();
+                Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
                 List<Assembly> assembly = new List<Assembly>()
                 {
                     Assembly.GetAssembly(typeof(System.Dynamic.DynamicObject)),  // System.Code
@@ -116,6 +119,8 @@ namespace kunif.EscPosEncode
                     );
                 }
                 catch { }
+
+                Directory.SetCurrentDirectory(cwd);
 
                 List<string> import = new List<string>()
                 {
