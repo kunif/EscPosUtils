@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020-2022 Kunio Fukuchi
+   Copyright (C) 2020-2023 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -510,8 +510,16 @@ namespace kunif.EscPosUtils
             int code = ((int)c1 << 8) + (int)c2;
             int width = 24;
             int height = 24;
-            record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 2), "1");
-            return $"CharacterCode:{code:X}";
+            string result = $"CharacterCode:{code:X}";
+            try
+            {
+                record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 2), "1");
+            }
+            catch
+            {
+                result += ", Graphics Data was invalid.";
+            }
+            return result;
         }
 
         //  FS  2   1C 32 7721-777E/EC40-EC9E/FEA1-FEFE 00-FF x 60
@@ -522,8 +530,16 @@ namespace kunif.EscPosUtils
             int code = ((int)c1 << 8) + (int)c2;
             int width = 20;
             int height = 24;
-            record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 2), "1");
-            return $"CharacterCode:{code:X}";
+            string result = $"CharacterCode:{code:X}";
+            try
+            {
+                record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 2), "1");
+            }
+            catch
+            {
+                result += ", Graphics Data was invalid.";
+            }
+            return result;
         }
 
         //  FS  2   1C 32 7721-777E/EC40-EC9E/FEA1-FEFE 00-FF x 32
@@ -534,8 +550,16 @@ namespace kunif.EscPosUtils
             int code = ((int)c1 << 8) + (int)c2;
             int width = 16;
             int height = 16;
-            record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 2), "1");
-            return $"CharacterCode:{code:X}";
+            string result = $"CharacterCode:{code:X}";
+            try
+            {
+                record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 2), "1");
+            }
+            catch
+            {
+                result += ", Graphics Data was invalid.";
+            }
+            return result;
         }
 
         //  FS  ?   1C 3F 7721-777E/EC40-EC9E/FEA1-FEFE
@@ -626,6 +650,7 @@ namespace kunif.EscPosUtils
             string imagecount = images != 0 ? images.ToString("D", invariantculture) : "0=Unsupported";
             List<System.Drawing.Bitmap> imagelist = new();
             int i = index + 1;
+            string errors = string.Empty;
             for (int n = 0; n < images; n++)
             {
                 int width = BitConverter.ToUInt16(record.cmddata, i);
@@ -635,12 +660,31 @@ namespace kunif.EscPosUtils
                 int datalength = width * heightbytes;
                 if (((heightbytes > 0) && (heightbytes <= 0x240)) && ((width > 0) && (width <= 0x3FF)))
                 {
-                    imagelist.Add(GetBitmap(width, height, ImageDataType.Column, record.cmddata, i, "1"));
+                    try
+                    {
+                        imagelist.Add(GetBitmap(width, height, ImageDataType.Column, record.cmddata, i, "1"));
+                    }
+                    catch
+                    {
+                        errors += $", No.{n}th data was invalid.";
+                    }
                 }
                 i += datalength;
             }
-            record.somebinary = imagelist.ToArray();
-            return $"NVImageCount:{imagecount}";
+            try
+            {
+                record.somebinary = imagelist.ToArray();
+            }
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
+            string result = $"NVImageCount:{imagecount}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
     }
 }

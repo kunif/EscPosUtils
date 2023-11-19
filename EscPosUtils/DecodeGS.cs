@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020-2022 Kunio Fukuchi
+   Copyright (C) 2020-2023 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -311,60 +311,73 @@ namespace kunif.EscPosUtils
             byte c2 = record.cmddata[index + 5];
             int count = c2 - c1 + 1;
             List<string> fonts = new();
-            List<System.Drawing.Bitmap> glyphs = new();
-            for (int i = 0, currindex = 9; (i < count) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                int x = record.cmddata[currindex];
-                string xsize = x switch
+                List<System.Drawing.Bitmap> glyphs = new();
+                for (int i = 0, currindex = 9; (i < count) && (currindex < record.cmdlength); i++)
                 {
-                    8 => "8",
-                    9 => "9",
-                    10 => "10",
-                    12 => "12",
-                    _ => "Undefined",
-                };
-                int ybits = x switch
-                {
-                    8 => 16,
-                    9 => 17,
-                    10 => 24,
-                    12 => 24,
-                    _ => 24,
-                };
-                int fdsize = (x * y);
-                System.Drawing.Bitmap bitmap = new(ybits, x, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = Color.Black;
-                bitmap.Palette = palette;
-                if (fdsize > 0)
-                {
-                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                    IntPtr ptr = bmpData.Scan0;
-                    int stride = bmpData.Stride;
-                    if (stride == y)
+                    int x = record.cmddata[currindex];
+                    string xsize = x switch
                     {
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (i + 1), ptr, fdsize);
-                    }
-                    else
+                        8 => "8",
+                        9 => "9",
+                        10 => "10",
+                        12 => "12",
+                        _ => "Undefined",
+                    };
+                    int ybits = x switch
                     {
-                        for (int j = 0; j < x; j++)
+                        8 => 16,
+                        9 => 17,
+                        10 => 24,
+                        12 => 24,
+                        _ => 24,
+                    };
+                    int fdsize = (x * y);
+                    System.Drawing.Bitmap bitmap = new(ybits, x, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = Color.Black;
+                    bitmap.Palette = palette;
+                    if (fdsize > 0)
+                    {
+                        System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                        IntPtr ptr = bmpData.Scan0;
+                        int stride = bmpData.Stride;
+                        if (stride == y)
                         {
-                            IntPtr curptr = bmpData.Scan0 + stride * j;
-                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (i + 1 + (y * j)), curptr, y);
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (i + 1), ptr, fdsize);
                         }
+                        else
+                        {
+                            for (int j = 0; j < x; j++)
+                            {
+                                IntPtr curptr = bmpData.Scan0 + stride * j;
+                                System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (i + 1 + (y * j)), curptr, y);
+                            }
+                        }
+                        bitmap.UnlockBits(bmpData);
                     }
-                    bitmap.UnlockBits(bmpData);
-                }
-                bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
-                glyphs.Add(bitmap);
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                    glyphs.Add(bitmap);
 
-                fonts.Add($"X size:{xsize} dot, this Length:{fdsize}");
-                currindex += fdsize + 1;
+                    fonts.Add($"X size:{xsize} dot, this Length:{fdsize}");
+                    currindex += fdsize + 1;
+                }
+                record.somebinary = glyphs.ToArray();
             }
-            record.somebinary = glyphs.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string fdlist = string.Join<string>(", ", fonts);
-            return $"Length:{length}, Y size:{ysize} byte, 1st code:{c1:X}, Last code:{c2:X}, Each data: {fdlist}";
+            string result = $"Length:{length}, Y size:{ysize} byte, 1st code:{c1:X}, Last code:{c2:X}, Each data: {fdlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  ( E 1D 28 45 0005-FFFF 09 01/02 20-7E 20-7E [10/11/18 00-FF...]...
@@ -386,47 +399,60 @@ namespace kunif.EscPosUtils
             byte c2 = record.cmddata[index + 5];
             int count = c2 - c1 + 1;
             List<string> fonts = new();
-            List<System.Drawing.Bitmap> glyphs = new();
-            for (int i = 0, currindex = 9; (i < count) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                int y = record.cmddata[currindex];
-                string ysize = y switch
+                List<System.Drawing.Bitmap> glyphs = new();
+                for (int i = 0, currindex = 9; (i < count) && (currindex < record.cmdlength); i++)
                 {
-                    16 => "16",
-                    17 => "17",
-                    24 => "24",
-                    _ => "Undefined",
-                };
-                int fdsize = (x * y);
-                System.Drawing.Bitmap bitmap = new((x * 8), y, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = Color.Black;
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                if (stride == x)
-                {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (i + 1), ptr, fdsize);
-                }
-                else
-                {
-                    for (int j = 0; j < y; j++)
+                    int y = record.cmddata[currindex];
+                    string ysize = y switch
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (i + 1 + (x * j)), curptr, x);
+                        16 => "16",
+                        17 => "17",
+                        24 => "24",
+                        _ => "Undefined",
+                    };
+                    int fdsize = (x * y);
+                    System.Drawing.Bitmap bitmap = new((x * 8), y, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = Color.Black;
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    if (stride == x)
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (i + 1), ptr, fdsize);
                     }
-                }
-                bitmap.UnlockBits(bmpData);
-                glyphs.Add(bitmap);
+                    else
+                    {
+                        for (int j = 0; j < y; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (i + 1 + (x * j)), curptr, x);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    glyphs.Add(bitmap);
 
-                fonts.Add($"Y size:{ysize} dot, this Length:{fdsize}");
-                currindex += fdsize + 1;
+                    fonts.Add($"Y size:{ysize} dot, this Length:{fdsize}");
+                    currindex += fdsize + 1;
+                }
+                record.somebinary = glyphs.ToArray();
             }
-            record.somebinary = glyphs.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string fdlist = string.Join<string>(", ", fonts);
-            return $"Length:{length}, X size:{xsize} byte, 1st code:{c1:X}, Last code:{c2:X}, Each data: {fdlist}";
+            string result = $"Length:{length}, X size:{xsize} byte, 1st code:{c1:X}, Last code:{c2:X}, Each data: {fdlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  ( E 1D 28 45 03 00 0A 80-FF 80-FF
@@ -911,54 +937,67 @@ namespace kunif.EscPosUtils
             int height = BitConverter.ToUInt16(record.cmddata, (index + 10));
             int size = ((width + 7) / 8) * height;
             List<string> buffers = new();
-            List<System.Drawing.Bitmap> planes = new();
-            for (int i = 0, currindex = (index + 12); (i < plane) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                string c = record.cmddata[currindex] switch
+                List<System.Drawing.Bitmap> planes = new();
+                for (int i = 0, currindex = (index + 12); (i < plane) && (currindex < record.cmdlength); i++)
                 {
-                    49 => "1",
-                    50 => "2",
-                    51 => "3",
-                    52 => "4",
-                    _ => "Undefined",
-                };
-                System.Drawing.Bitmap bitmap = new(width, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = c switch
-                {
-                    "1" => Color.Black,
-                    "2" => Color.Red,
-                    "3" => Color.Green,
-                    "4" => Color.Blue,
-                    _ => Color.Yellow,
-                };
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                int linesize = (width + 7) / 8;
-                if (stride == linesize)
-                {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
-                }
-                else
-                {
-                    for (int j = 0; j < height; j++)
+                    string c = record.cmddata[currindex] switch
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        49 => "1",
+                        50 => "2",
+                        51 => "3",
+                        52 => "4",
+                        _ => "Undefined",
+                    };
+                    System.Drawing.Bitmap bitmap = new(width, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = c switch
+                    {
+                        "1" => Color.Black,
+                        "2" => Color.Red,
+                        "3" => Color.Green,
+                        "4" => Color.Blue,
+                        _ => Color.Yellow,
+                    };
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    int linesize = (width + 7) / 8;
+                    if (stride == linesize)
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
                     }
-                }
-                bitmap.UnlockBits(bmpData);
-                planes.Add(bitmap);
+                    else
+                    {
+                        for (int j = 0; j < height; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    planes.Add(bitmap);
 
-                currindex += size + 1;
-                buffers.Add($"Color:{c}, Size:{size}");
+                    currindex += size + 1;
+                    buffers.Add($"Color:{c}, Size:{size}");
+                }
+                record.somebinary = planes.ToArray();
             }
-            record.somebinary = planes.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string bufferlist = string.Join<string>(", ", buffers);
-            return $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            string result = $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  8 L 1D 38 4C 0000000C-FFFFFFFF 30 43 30/34 20-7E 20-7E 01-04 0001-2000 0001-0900 [31-34 00-FF...]...
@@ -981,54 +1020,67 @@ namespace kunif.EscPosUtils
             int height = BitConverter.ToUInt16(record.cmddata, (index + 12));
             int size = ((width + 7) / 8) * height;
             List<string> buffers = new();
-            List<System.Drawing.Bitmap> planes = new();
-            for (int i = 0, currindex = (index + 14); (i < plane) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                string c = record.cmddata[currindex] switch
+                List<System.Drawing.Bitmap> planes = new();
+                for (int i = 0, currindex = (index + 14); (i < plane) && (currindex < record.cmdlength); i++)
                 {
-                    49 => "1",
-                    50 => "2",
-                    51 => "3",
-                    52 => "4",
-                    _ => "Undefined",
-                };
-                System.Drawing.Bitmap bitmap = new(width, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = c switch
-                {
-                    "1" => Color.Black,
-                    "2" => Color.Red,
-                    "3" => Color.Green,
-                    "4" => Color.Blue,
-                    _ => Color.Yellow,
-                };
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                int linesize = (width + 7) / 8;
-                if (stride == linesize)
-                {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
-                }
-                else
-                {
-                    for (int j = 0; j < height; j++)
+                    string c = record.cmddata[currindex] switch
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        49 => "1",
+                        50 => "2",
+                        51 => "3",
+                        52 => "4",
+                        _ => "Undefined",
+                    };
+                    System.Drawing.Bitmap bitmap = new(width, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = c switch
+                    {
+                        "1" => Color.Black,
+                        "2" => Color.Red,
+                        "3" => Color.Green,
+                        "4" => Color.Blue,
+                        _ => Color.Yellow,
+                    };
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    int linesize = (width + 7) / 8;
+                    if (stride == linesize)
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
                     }
-                }
-                bitmap.UnlockBits(bmpData);
-                planes.Add(bitmap);
+                    else
+                    {
+                        for (int j = 0; j < height; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    planes.Add(bitmap);
 
-                currindex += size + 1;
-                buffers.Add($"Color:{c}, Size:{size}");
+                    currindex += size + 1;
+                    buffers.Add($"Color:{c}, Size:{size}");
+                }
+                record.somebinary = planes.ToArray();
             }
-            record.somebinary = planes.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string bufferlist = string.Join<string>(", ", buffers);
-            return $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            string result = $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  ( L 1D 28 4C 000C-FFFF 30 44 30 30 20-7E 20-7E 01/02 0001-2000 0001-0900 [31-33 00-FF...]...
@@ -1051,55 +1103,68 @@ namespace kunif.EscPosUtils
             int height = BitConverter.ToUInt16(record.cmddata, (index + 10));
             int size = width * ((height + 7) / 8);
             List<string> buffers = new();
-            List<System.Drawing.Bitmap> planes = new();
-            for (int i = 0, currindex = (index + 12); (i < plane) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                string c = record.cmddata[currindex] switch
+                List<System.Drawing.Bitmap> planes = new();
+                for (int i = 0, currindex = (index + 12); (i < plane) && (currindex < record.cmdlength); i++)
                 {
-                    49 => "1",
-                    50 => "2",
-                    51 => "3",
-                    52 => "4",
-                    _ => "Undefined",
-                };
-                System.Drawing.Bitmap bitmap = new(height, width, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = c switch
-                {
-                    "1" => Color.Black,
-                    "2" => Color.Red,
-                    "3" => Color.Green,
-                    "4" => Color.Blue,
-                    _ => Color.Yellow,
-                };
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                int linesize = (height + 7) / 8;
-                if (stride == linesize)
-                {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
-                }
-                else
-                {
-                    for (int j = 0; j < width; j++)
+                    string c = record.cmddata[currindex] switch
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        49 => "1",
+                        50 => "2",
+                        51 => "3",
+                        52 => "4",
+                        _ => "Undefined",
+                    };
+                    System.Drawing.Bitmap bitmap = new(height, width, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = c switch
+                    {
+                        "1" => Color.Black,
+                        "2" => Color.Red,
+                        "3" => Color.Green,
+                        "4" => Color.Blue,
+                        _ => Color.Yellow,
+                    };
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    int linesize = (height + 7) / 8;
+                    if (stride == linesize)
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
                     }
-                }
-                bitmap.UnlockBits(bmpData);
-                bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
-                planes.Add(bitmap);
+                    else
+                    {
+                        for (int j = 0; j < width; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                    planes.Add(bitmap);
 
-                currindex += size + 1;
-                buffers.Add($"Color:{c}, Size:{size}");
+                    currindex += size + 1;
+                    buffers.Add($"Color:{c}, Size:{size}");
+                }
+                record.somebinary = planes.ToArray();
             }
-            record.somebinary = planes.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string bufferlist = string.Join<string>(", ", buffers);
-            return $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            string result = $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  8 L 1D 38 4C 0000000C-FFFFFFFF 30 44 30 30 20-7E 20-7E 01/02 0001-2000 0001-0900 [31-33 00-FF...]...
@@ -1122,55 +1187,68 @@ namespace kunif.EscPosUtils
             int height = BitConverter.ToUInt16(record.cmddata, (index + 12));
             int size = width * ((height + 7) / 8);
             List<string> buffers = new();
-            List<System.Drawing.Bitmap> planes = new();
-            for (int i = 0, currindex = (index + 14); (i < plane) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                string c = record.cmddata[currindex] switch
+                List<System.Drawing.Bitmap> planes = new();
+                for (int i = 0, currindex = (index + 14); (i < plane) && (currindex < record.cmdlength); i++)
                 {
-                    49 => "1",
-                    50 => "2",
-                    51 => "3",
-                    52 => "4",
-                    _ => "Undefined",
-                };
-                System.Drawing.Bitmap bitmap = new(height, width, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = c switch
-                {
-                    "1" => Color.Black,
-                    "2" => Color.Red,
-                    "3" => Color.Green,
-                    "4" => Color.Blue,
-                    _ => Color.Yellow,
-                };
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                int linesize = (height + 7) / 8;
-                if (stride == linesize)
-                {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
-                }
-                else
-                {
-                    for (int j = 0; j < width; j++)
+                    string c = record.cmddata[currindex] switch
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        49 => "1",
+                        50 => "2",
+                        51 => "3",
+                        52 => "4",
+                        _ => "Undefined",
+                    };
+                    System.Drawing.Bitmap bitmap = new(height, width, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = c switch
+                    {
+                        "1" => Color.Black,
+                        "2" => Color.Red,
+                        "3" => Color.Green,
+                        "4" => Color.Blue,
+                        _ => Color.Yellow,
+                    };
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    int linesize = (height + 7) / 8;
+                    if (stride == linesize)
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
                     }
-                }
-                bitmap.UnlockBits(bmpData);
-                bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
-                planes.Add(bitmap);
+                    else
+                    {
+                        for (int j = 0; j < width; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                    planes.Add(bitmap);
 
-                currindex += size + 1;
-                buffers.Add($"Color:{c}, Size:{size}");
+                    currindex += size + 1;
+                    buffers.Add($"Color:{c}, Size:{size}");
+                }
+                record.somebinary = planes.ToArray();
             }
-            record.somebinary = planes.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string bufferlist = string.Join<string>(", ", buffers);
-            return $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            string result = $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  ( L 1D 28 4C 000C-FFFF 30 53 30/34 20-7E 20-7E 01-04 0001-2000 0001-0900 [31-34 00-FF...]...
@@ -1193,54 +1271,67 @@ namespace kunif.EscPosUtils
             int height = BitConverter.ToUInt16(record.cmddata, (index + 10));
             int size = ((width + 7) / 8) * height;
             List<string> buffers = new();
-            List<System.Drawing.Bitmap> planes = new();
-            for (int i = 0, currindex = (index + 12); (i < plane) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                string c = record.cmddata[currindex] switch
+                List<System.Drawing.Bitmap> planes = new();
+                for (int i = 0, currindex = (index + 12); (i < plane) && (currindex < record.cmdlength); i++)
                 {
-                    49 => "1",
-                    50 => "2",
-                    51 => "3",
-                    52 => "4",
-                    _ => "Undefined",
-                };
-                System.Drawing.Bitmap bitmap = new(width, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = c switch
-                {
-                    "1" => Color.Black,
-                    "2" => Color.Red,
-                    "3" => Color.Green,
-                    "4" => Color.Blue,
-                    _ => Color.Yellow,
-                };
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                int linesize = (width + 7) / 8;
-                if (stride == linesize)
-                {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
-                }
-                else
-                {
-                    for (int j = 0; j < height; j++)
+                    string c = record.cmddata[currindex] switch
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        49 => "1",
+                        50 => "2",
+                        51 => "3",
+                        52 => "4",
+                        _ => "Undefined",
+                    };
+                    System.Drawing.Bitmap bitmap = new(width, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = c switch
+                    {
+                        "1" => Color.Black,
+                        "2" => Color.Red,
+                        "3" => Color.Green,
+                        "4" => Color.Blue,
+                        _ => Color.Yellow,
+                    };
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    int linesize = (width + 7) / 8;
+                    if (stride == linesize)
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
                     }
-                }
-                bitmap.UnlockBits(bmpData);
-                planes.Add(bitmap);
+                    else
+                    {
+                        for (int j = 0; j < height; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    planes.Add(bitmap);
 
-                currindex += size + 1;
-                buffers.Add($"Color:{c}, Size:{size}");
+                    currindex += size + 1;
+                    buffers.Add($"Color:{c}, Size:{size}");
+                }
+                record.somebinary = planes.ToArray();
             }
-            record.somebinary = planes.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string bufferlist = string.Join<string>(", ", buffers);
-            return $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            string result = $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  8 L 1D 38 4C 0000000C-FFFFFFFF 30 53 30/34 20-7E 20-7E 01-04 0001-2000 0001-0900 [31-34 00-FF...]...
@@ -1263,54 +1354,67 @@ namespace kunif.EscPosUtils
             int height = BitConverter.ToUInt16(record.cmddata, (index + 12));
             int size = ((width + 7) / 8) * height;
             List<string> buffers = new();
-            List<System.Drawing.Bitmap> planes = new();
-            for (int i = 0, currindex = (index + 14); (i < plane) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                string c = record.cmddata[currindex] switch
+                List<System.Drawing.Bitmap> planes = new();
+                for (int i = 0, currindex = (index + 14); (i < plane) && (currindex < record.cmdlength); i++)
                 {
-                    49 => "1",
-                    50 => "2",
-                    51 => "3",
-                    52 => "4",
-                    _ => "Undefined",
-                };
-                System.Drawing.Bitmap bitmap = new(width, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = c switch
-                {
-                    "1" => Color.Black,
-                    "2" => Color.Red,
-                    "3" => Color.Green,
-                    "4" => Color.Blue,
-                    _ => Color.Yellow,
-                };
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                int linesize = (width + 7) / 8;
-                if (stride == linesize)
-                {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
-                }
-                else
-                {
-                    for (int j = 0; j < height; j++)
+                    string c = record.cmddata[currindex] switch
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        49 => "1",
+                        50 => "2",
+                        51 => "3",
+                        52 => "4",
+                        _ => "Undefined",
+                    };
+                    System.Drawing.Bitmap bitmap = new(width, height, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = c switch
+                    {
+                        "1" => Color.Black,
+                        "2" => Color.Red,
+                        "3" => Color.Green,
+                        "4" => Color.Blue,
+                        _ => Color.Yellow,
+                    };
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    int linesize = (width + 7) / 8;
+                    if (stride == linesize)
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
                     }
-                }
-                bitmap.UnlockBits(bmpData);
-                planes.Add(bitmap);
+                    else
+                    {
+                        for (int j = 0; j < height; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    planes.Add(bitmap);
 
-                currindex += size + 1;
-                buffers.Add($"Color:{c}, Size:{size}");
+                    currindex += size + 1;
+                    buffers.Add($"Color:{c}, Size:{size}");
+                }
+                record.somebinary = planes.ToArray();
             }
-            record.somebinary = planes.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string bufferlist = string.Join<string>(", ", buffers);
-            return $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            string result = $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  ( L 1D 28 4C 000C-FFFF 30 54 30 30 20-7E 20-7E 01/02 0001-2000 0001-0900 [31-33 00-FF...]...
@@ -1333,55 +1437,68 @@ namespace kunif.EscPosUtils
             int height = BitConverter.ToUInt16(record.cmddata, (index + 10));
             int size = width * ((height + 7) / 8);
             List<string> buffers = new();
-            List<System.Drawing.Bitmap> planes = new();
-            for (int i = 0, currindex = (index + 12); (i < plane) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                string c = record.cmddata[currindex] switch
+                List<System.Drawing.Bitmap> planes = new();
+                for (int i = 0, currindex = (index + 12); (i < plane) && (currindex < record.cmdlength); i++)
                 {
-                    49 => "1",
-                    50 => "2",
-                    51 => "3",
-                    52 => "4",
-                    _ => "Undefined",
-                };
-                System.Drawing.Bitmap bitmap = new(height, width, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = c switch
-                {
-                    "1" => Color.Black,
-                    "2" => Color.Red,
-                    "3" => Color.Green,
-                    "4" => Color.Blue,
-                    _ => Color.Yellow,
-                };
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                int linesize = (height + 7) / 8;
-                if (stride == linesize)
-                {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
-                }
-                else
-                {
-                    for (int j = 0; j < width; j++)
+                    string c = record.cmddata[currindex] switch
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        49 => "1",
+                        50 => "2",
+                        51 => "3",
+                        52 => "4",
+                        _ => "Undefined",
+                    };
+                    System.Drawing.Bitmap bitmap = new(height, width, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = c switch
+                    {
+                        "1" => Color.Black,
+                        "2" => Color.Red,
+                        "3" => Color.Green,
+                        "4" => Color.Blue,
+                        _ => Color.Yellow,
+                    };
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    int linesize = (height + 7) / 8;
+                    if (stride == linesize)
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
                     }
-                }
-                bitmap.UnlockBits(bmpData);
-                bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
-                planes.Add(bitmap);
+                    else
+                    {
+                        for (int j = 0; j < width; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                    planes.Add(bitmap);
 
-                currindex += size + 1;
-                buffers.Add($"Color:{c}, Size:{size}");
+                    currindex += size + 1;
+                    buffers.Add($"Color:{c}, Size:{size}");
+                }
+                record.somebinary = planes.ToArray();
             }
-            record.somebinary = planes.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string bufferlist = string.Join<string>(", ", buffers);
-            return $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            string result = $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  8 L 1D 38 4C 0000000C-FFFFFFFF 30 54 30 30 20-7E 20-7E 01/02 0001-2000 0001-0900 [31-33 00-FF...]...
@@ -1404,55 +1521,68 @@ namespace kunif.EscPosUtils
             int height = BitConverter.ToUInt16(record.cmddata, (index + 12));
             int size = width * ((height + 7) / 8);
             List<string> buffers = new();
-            List<System.Drawing.Bitmap> planes = new();
-            for (int i = 0, currindex = (index + 14); (i < plane) && (currindex < record.cmdlength); i++)
+            string errors = string.Empty;
+            try
             {
-                string c = record.cmddata[currindex] switch
+                List<System.Drawing.Bitmap> planes = new();
+                for (int i = 0, currindex = (index + 14); (i < plane) && (currindex < record.cmdlength); i++)
                 {
-                    49 => "1",
-                    50 => "2",
-                    51 => "3",
-                    52 => "4",
-                    _ => "Undefined",
-                };
-                System.Drawing.Bitmap bitmap = new(height, width, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = c switch
-                {
-                    "1" => Color.Black,
-                    "2" => Color.Red,
-                    "3" => Color.Green,
-                    "4" => Color.Blue,
-                    _ => Color.Yellow,
-                };
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                int linesize = (height + 7) / 8;
-                if (stride == linesize)
-                {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
-                }
-                else
-                {
-                    for (int j = 0; j < width; j++)
+                    string c = record.cmddata[currindex] switch
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        49 => "1",
+                        50 => "2",
+                        51 => "3",
+                        52 => "4",
+                        _ => "Undefined",
+                    };
+                    System.Drawing.Bitmap bitmap = new(height, width, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = c switch
+                    {
+                        "1" => Color.Black,
+                        "2" => Color.Red,
+                        "3" => Color.Green,
+                        "4" => Color.Blue,
+                        _ => Color.Yellow,
+                    };
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    int linesize = (height + 7) / 8;
+                    if (stride == linesize)
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1), ptr, size);
                     }
-                }
-                bitmap.UnlockBits(bmpData);
-                bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
-                planes.Add(bitmap);
+                    else
+                    {
+                        for (int j = 0; j < width; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (currindex + 1 + (linesize * j)), curptr, linesize);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                    planes.Add(bitmap);
 
-                currindex += size + 1;
-                buffers.Add($"Color:{c}, Size:{size}");
+                    currindex += size + 1;
+                    buffers.Add($"Color:{c}, Size:{size}");
+                }
+                record.somebinary = planes.ToArray();
             }
-            record.somebinary = planes.ToArray();
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string bufferlist = string.Join<string>(", ", buffers);
-            return $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            string result = $"Length:{length}, Tone:{tone}, KeyCode:{keycode}, Width:{width}, Height:{height}, Plane:{plane}, BufferList:{bufferlist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  ( L 1D 28 4C 000B-FFFF 30 70 30/34 01/02 01/02 31-34 0001-0960 0001-0960 00-FF...
@@ -1492,8 +1622,16 @@ namespace kunif.EscPosUtils
             int width = BitConverter.ToUInt16(record.cmddata, (index + 8));
             int height = BitConverter.ToUInt16(record.cmddata, (index + 10));
             int size = ((width + 7) / 8) * height;
-            record.somebinary = GetBitmap(width, height, ImageDataType.Raster, record.cmddata, (index + 12), color);
-            return $"Length:{length}, Tone:{tone}, X times:{bx}, Y times:{by}, Color:{color}, Width:{width}, Height:{height}, Size:{size}";
+            string result = $"Length:{length}, Tone:{tone}, X times:{bx}, Y times:{by}, Color:{color}, Width:{width}, Height:{height}, Size:{size}";
+            try
+            {
+                record.somebinary = GetBitmap(width, height, ImageDataType.Raster, record.cmddata, (index + 12), color);
+            }
+            catch
+            {
+                result += ", Graphics Data was invalid.";
+            }
+            return result;
         }
 
         //  GS  8 L 1D 38 4C 0000000B-FFFFFFFF 30 70 30/34 01/02 01/02 31-34 0001-0960 0001-0960 00-FF...
@@ -1533,8 +1671,16 @@ namespace kunif.EscPosUtils
             int width = BitConverter.ToUInt16(record.cmddata, (index + 10));
             int height = BitConverter.ToUInt16(record.cmddata, (index + 12));
             int size = ((width + 7) / 8) * height;
-            record.somebinary = GetBitmap(width, height, ImageDataType.Raster, record.cmddata, (index + 14), color);
-            return $"Length:{length}, Tone:{tone}, X times:{bx}, Y times:{by}, Color:{color}, Width:{width}, Height:{height}, Size:{size}";
+            string result = $"Length:{length}, Tone:{tone}, X times:{bx}, Y times:{by}, Color:{color}, Width:{width}, Height:{height}, Size:{size}";
+            try
+            {
+                record.somebinary = GetBitmap(width, height, ImageDataType.Raster, record.cmddata, (index + 14), color);
+            }
+            catch
+            {
+                result += ", Graphics Data was invalid.";
+            }
+            return result;
         }
 
         //  GS  ( L 1D 28 4C 000B-FFFF 30 71 30 01/02 01/02 31-33 0001-0800 0001-0080 00-FF...
@@ -1574,8 +1720,16 @@ namespace kunif.EscPosUtils
             int width = BitConverter.ToUInt16(record.cmddata, (index + 8));
             int height = BitConverter.ToUInt16(record.cmddata, (index + 10));
             int size = width * ((height + 7) / 8);
-            record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 12), color);
-            return $"Length:{length}, Tone:{tone}, X times:{bx}, Y times:{by}, Color:{color}, Width:{width}, Height:{height}, Size:{size}";
+            string result = $"Length:{length}, Tone:{tone}, X times:{bx}, Y times:{by}, Color:{color}, Width:{width}, Height:{height}, Size:{size}";
+            try
+            {
+                record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 12), color);
+            }
+            catch
+            {
+                result += ", Graphics Data was invalid.";
+            }
+            return result;
         }
 
         //  GS  8 L 1D 38 4C 0000000B-FFFFFFFF 30 71 30 01/02 01/02 31-33 0001-0800 0001-0080 00-FF...
@@ -1615,8 +1769,16 @@ namespace kunif.EscPosUtils
             int width = BitConverter.ToUInt16(record.cmddata, (index + 10));
             int height = BitConverter.ToUInt16(record.cmddata, (index + 12));
             int size = width * ((height + 7) / 8);
-            record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 14), color);
-            return $"Length:{length}, Tone:{tone}, X times:{bx}, Y times:{by}, Color:{color}, Width:{width}, Height:{height}, Size:{size}";
+            string result = $"Length:{length}, Tone:{tone}, X times:{bx}, Y times:{by}, Color:{color}, Width:{width}, Height:{height}, Size:{size}";
+            try
+            {
+                record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 14), color);
+            }
+            catch
+            {
+                result += ", Graphics Data was invalid.";
+            }
+            return result;
         }
 
         //  GS  ( L 1D 28 4C 04 00 30 01/31 32/33 32/33
@@ -2532,30 +2694,38 @@ namespace kunif.EscPosUtils
                 return $"Invalid value Width:{x} dots, Height:{y} x 8 dots";
             }
             int length = x * y * 8;
-            System.Drawing.Bitmap bitmap = new((y * 8), x, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-            ColorPalette palette = bitmap.Palette;
-            palette.Entries[0] = Color.White;
-            palette.Entries[1] = Color.Black;
-            bitmap.Palette = palette;
-            System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-            IntPtr ptr = bmpData.Scan0;
-            int stride = bmpData.Stride;
-            if (stride == y)
+            string result = $"Width:{x} dots, Height:{y} x 8 dots, Length:{length}";
+            try
             {
-                System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 2), ptr, length);
-            }
-            else
-            {
-                for (int j = 0; j < x; j++)
+                System.Drawing.Bitmap bitmap = new((y * 8), x, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                ColorPalette palette = bitmap.Palette;
+                palette.Entries[0] = Color.White;
+                palette.Entries[1] = Color.Black;
+                bitmap.Palette = palette;
+                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                IntPtr ptr = bmpData.Scan0;
+                int stride = bmpData.Stride;
+                if (stride == y)
                 {
-                    IntPtr curptr = bmpData.Scan0 + stride * j;
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 2 + (y * j)), curptr, y);
+                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 2), ptr, length);
                 }
+                else
+                {
+                    for (int j = 0; j < x; j++)
+                    {
+                        IntPtr curptr = bmpData.Scan0 + stride * j;
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 2 + (y * j)), curptr, y);
+                    }
+                }
+                bitmap.UnlockBits(bmpData);
+                bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                record.somebinary = bitmap.Clone();
             }
-            bitmap.UnlockBits(bmpData);
-            bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
-            record.somebinary = bitmap.Clone();
-            return $"Width:{x} dots, Height:{y} x 8 dots, Length:{length}";
+            catch
+            {
+                result += ", Graphics Data was invalid.";
+            }
+            return result;
         }
 
         //  GS  /   1D 2F 00-03/30-33
@@ -2641,13 +2811,28 @@ namespace kunif.EscPosUtils
                 _ => "Undefined",
             };
             string c = (record.cmddata[index + 3] == 49) ? "Color 1" : "Undefined";
-            using MemoryStream stream = new(record.cmddata, (index + 4), (int)(record.cmdlength - 9), false);
-            using System.Drawing.Image img = System.Drawing.Image.FromStream(stream);
-            record.somebinary = stream.ToArray();
-            int width = img.Width;
-            int height = img.Height;
+            int width = 0;
+            int height = 0;
+            string errors = string.Empty;
+            try
+            {
+                using MemoryStream stream = new(record.cmddata, (index + 4), (int)(record.cmdlength - 9), false);
+                using System.Drawing.Image img = System.Drawing.Image.FromStream(stream);
+                record.somebinary = stream.ToArray();
+                width = img.Width;
+                height = img.Height;
+            }
+            catch
+            {
+                errors += ", Graphics Data was invalid.";
+            }
             long bmpsize = BitConverter.ToUInt32(record.cmddata, (index + 6));
-            return $"Length:{record.cmdlength}, Tone:{b}, KeyCode:{keycode}, Width:{width}, Height:{height}, Color:{c}, BMPsize:{bmpsize}";
+            string result = $"Length:{record.cmdlength}, Tone:{b}, KeyCode:{keycode}, Width:{width}, Height:{height}, Color:{c}, BMPsize:{bmpsize}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  GS  D   1D 44 30 53 30 20-7E 20-7E 30/34 31 42 4D 00000042-FFFFFFFF 00-FF...
@@ -2661,13 +2846,28 @@ namespace kunif.EscPosUtils
                 _ => "Undefined",
             };
             string c = (record.cmddata[index + 3] == 49) ? "Color 1" : "Undefined";
-            using MemoryStream stream = new(record.cmddata, (index + 4), (int)(record.cmdlength - 9), false);
-            using System.Drawing.Image img = System.Drawing.Image.FromStream(stream);
-            record.somebinary = stream.ToArray();
-            int width = img.Width;
-            int height = img.Height;
+            int width = 0;
+            int height = 0;
+            string errors = string.Empty;
+            try
+            {
+                using MemoryStream stream = new(record.cmddata, (index + 4), (int)(record.cmdlength - 9), false);
+                using System.Drawing.Image img = System.Drawing.Image.FromStream(stream);
+                record.somebinary = stream.ToArray();
+                width = img.Width;
+                height = img.Height;
+            }
+            catch
+            {
+                errors += ", Graphics Data was invalid.";
+            }
             long bmpsize = BitConverter.ToUInt32(record.cmddata, (index + 6));
-            return $"Length:{record.cmdlength}, Tone:{b}, KeyCode:{keycode}, Width:{width}, Height:{height}, Color:{c}, BMPsize:{bmpsize}";
+            string result = $"Length:{record.cmdlength}, Tone:{b}, KeyCode:{keycode}, Width:{width}, Height:{height}, Color:{c}, BMPsize:{bmpsize}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //c GS  E   1D 45 b000x0x0x
@@ -2752,33 +2952,41 @@ namespace kunif.EscPosUtils
             int y = BitConverter.ToUInt16(record.cmddata, index + 3);
             string yvalue = ((y >= 1) && (y <= 16)) ? y.ToString("D", invariantculture) : "Out of range";
             int k = x * y;
+            string result = $"Mode:{m}, Width:{xvalue} dots, Height:{yvalue} bytes, Size:{k} bytes";
             if (((y > 0) && (y <= 16)) && ((x > 0) && (x <= 4256)))
             {
-                System.Drawing.Bitmap bitmap = new((y * 8), x, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = Color.Black;
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                if (stride == y)
+                try
                 {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 5), ptr, k);
-                }
-                else
-                {
-                    for (int j = 0; j < x; j++)
+                    System.Drawing.Bitmap bitmap = new((y * 8), x, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = Color.Black;
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    if (stride == y)
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 5 + (y * j)), curptr, y);
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 5), ptr, k);
                     }
+                    else
+                    {
+                        for (int j = 0; j < x; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 5 + (y * j)), curptr, y);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                    record.somebinary = bitmap.Clone();
                 }
-                bitmap.UnlockBits(bmpData);
-                bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
-                record.somebinary = bitmap.Clone();
+                catch
+                {
+                    result += ", Graphics Data was invalid.";
+                }
             }
-            return $"Mode:{m}, Width:{xvalue} dots, Height:{yvalue} bytes, Size:{k} bytes";
+            return result;
         }
 
         //  GS  T   1D 54 00/01/30/31
@@ -2966,32 +3174,40 @@ namespace kunif.EscPosUtils
             int y = BitConverter.ToUInt16(record.cmddata, index + 3);
             string yvalue = ((y >= 1) && (y <= 4607)) ? y.ToString("D", invariantculture) : "Out of range";
             int k = x * y;
+            string result = $"Mode:{m}, Width:{xvalue} bytes, Height:{yvalue} dots, Size:{k} bytes";
             if (((y > 0) && (y <= 4607)) && (x > 0))
             {
-                System.Drawing.Bitmap bitmap = new((x * 8), y, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                ColorPalette palette = bitmap.Palette;
-                palette.Entries[0] = Color.White;
-                palette.Entries[1] = Color.Black;
-                bitmap.Palette = palette;
-                System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                IntPtr ptr = bmpData.Scan0;
-                int stride = bmpData.Stride;
-                if (stride == x)
+                try
                 {
-                    System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 5), ptr, k);
-                }
-                else
-                {
-                    for (int j = 0; j < y; j++)
+                    System.Drawing.Bitmap bitmap = new((x * 8), y, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    ColorPalette palette = bitmap.Palette;
+                    palette.Entries[0] = Color.White;
+                    palette.Entries[1] = Color.Black;
+                    bitmap.Palette = palette;
+                    System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                    IntPtr ptr = bmpData.Scan0;
+                    int stride = bmpData.Stride;
+                    if (stride == x)
                     {
-                        IntPtr curptr = bmpData.Scan0 + stride * j;
-                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 5 + (x * j)), curptr, x);
+                        System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 5), ptr, k);
                     }
+                    else
+                    {
+                        for (int j = 0; j < y; j++)
+                        {
+                            IntPtr curptr = bmpData.Scan0 + stride * j;
+                            System.Runtime.InteropServices.Marshal.Copy(record.cmddata, (index + 5 + (x * j)), curptr, x);
+                        }
+                    }
+                    bitmap.UnlockBits(bmpData);
+                    record.somebinary = bitmap.Clone();
                 }
-                bitmap.UnlockBits(bmpData);
-                record.somebinary = bitmap.Clone();
+                catch
+                {
+                    result += ", Graphics Data was invalid.";
+                }
             }
-            return $"Mode:{m}, Width:{xvalue} bytes, Height:{yvalue} dots, Size:{k} bytes";
+            return result;
         }
 
         //  GS  w   1D 77 02-06/44-4C

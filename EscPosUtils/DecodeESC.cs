@@ -1,6 +1,6 @@
 ﻿/*
 
-   Copyright (C) 2020-2022 Kunio Fukuchi
+   Copyright (C) 2020-2023 Kunio Fukuchi
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
@@ -90,13 +90,21 @@ namespace kunif.EscPosUtils
             int i = index + 3;
             List<string> chars = new();
             List<System.Drawing.Bitmap> glyphs = new();
+            string errors = string.Empty;
             for (int n = 0; n < count; n++)
             {
                 byte xbytes = record.cmddata[i];
                 int size = ybytes * xbytes;
                 if (size > 0)
                 {
-                    glyphs.Add(GetBitmap(xbytes, height, ImageDataType.Column, record.cmddata, (i + 1), "1"));
+                    try
+                    {
+                        glyphs.Add(GetBitmap(xbytes, height, ImageDataType.Column, record.cmddata, (i + 1), "1"));
+                    }
+                    catch
+                    {
+                        errors += $", No.{n}th data was invalid.";
+                    }
                 }
                 else
                 {
@@ -111,9 +119,21 @@ namespace kunif.EscPosUtils
                 i += size + 1;
                 chars.Add($"X:{xbytes} bytes, Size:{size}");
             }
-            record.somebinary = glyphs.ToArray();
+            try
+            {
+                record.somebinary = glyphs.ToArray();
+            }
+            catch
+            {
+                errors += $", somebinary data could not be stored.";
+            }
             string charslist = string.Join(", ", chars);
-            return $"VerticalBytes:{ybytes}, StartCode:{startcode}, EndCode:{endcode}, Characters:{charslist}";
+            string result = $"VerticalBytes:{ybytes}, StartCode:{startcode}, EndCode:{endcode}, Characters:{charslist}";
+            if (errors.Length > 0)
+            {
+                result += errors;
+            }
+            return result;
         }
 
         //  ESC ( A 1B 28 41 04 00 30 30-3A 01-3F 0A-FF
@@ -271,11 +291,19 @@ namespace kunif.EscPosUtils
             };
             int width = BitConverter.ToUInt16(record.cmddata, index + 1);
             string widthstr = width.ToString("D", invariantculture);
+            string result = $"Mode:{modestr}, Width:{widthstr} dot";
             if ((height > 0) && ((width > 0) && (width <= 0x960)))
             {
-                record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 3), "1");
+                try
+                {
+                    record.somebinary = GetBitmap(width, height, ImageDataType.Column, record.cmddata, (index + 3), "1");
+                }
+                catch
+                {
+                    result += ", Graphics Data was invalid.";
+                }
             }
-            return $"Mode:{modestr}, Width:{widthstr} dot";
+            return result;
         }
 
         //  ESC -   1B 2D 00-02/30-32

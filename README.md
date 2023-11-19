@@ -18,22 +18,22 @@ Currently, it have the following four projects.
 
 To develop and execute this program you need:
 
-- Visual Studio 2022 or Visual Studio Community 2022  version 17.3.4
-- .NET 6.0-Windows
+- Visual Studio 2022 or Visual Studio Community 2022  version 17.8.0
+- .NET 8.0-Windows
 - .NET Standard 2.1
-- .NET Core App 3.1
-- KGySoft.CoreLibraries 6.0.2
-- KGySoft.Drawing.Common 6.3.2
-- System.Drawing.Common 6.0.0
+- KGySoft.CoreLibraries 8.0.0
+- KGySoft.Drawing 7.2.0
+- System.Drawing.Common 8.0.0
 - System.Drawing.Primitives 4.3.0
 - System.Reflection 4.3.0
-- System.Text.Encoding.CodePages 6.0.0
-- Microsoft.CodeAnalysis.CSharp.Scripting 4.3.0
+- System.Resource.Extensions 8.0.0
+- System.Text.Encoding.CodePages 8.0.0
+- Microsoft.CodeAnalysis.CSharp.Scripting 4.8.0-3.final
 - Microsoft.CSharp 4.7.0
-- Microsoft.NET.Test.sdk 17.3.1
-- MSTest.TestAdapter 2.2.10
-- MSTest.TestFramework 2.2.10
-- coverlet.collector 3.1.2
+- Microsoft.NET.Test.sdk 17.9.0-preview-23531-01
+- MSTest.TestAdapter 3.1.1
+- MSTest.TestFramework 3.1.1
+- coverlet.collector 6.0.0
 
 
 ## EscPosUtils Features and API
